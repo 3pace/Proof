@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+       <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="5"
+        android:id="@+id/etxt_login"
+        android:theme="@style/TitleText"
+        android:inputType="textCapCharacters|textMultiLine"
+        android:hint="@string/login_hint_example"
+        android:paddingLeft="@dimen/large_padding"
+        android:paddingRight="@dimen/large_padding"
+        android:paddingTop="@dimen/small_padding"
+        android:paddingBottom="@dimen/small_padding"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="5"
+        android:id="@+id/etxt_password"
+        android:theme="@style/TitleText"
+        android:inputType="textPassword"
+        android:hint="@string/password_hint_example"
+        android:paddingLeft="@dimen/large_padding"
+        android:paddingRight="@dimen/large_padding"
+        android:paddingTop="@dimen/small_padding"
+        android:paddingBottom="@dimen/small_padding"/>
+    <!--ЗАМЕНИТЬ НА КНОПКИ!-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_next"
+        android:textSize="@dimen/normal_txt_size"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:gravity="right"
+        android:text="@string/next_title"
+        android:paddingLeft="@dimen/large_padding"
+        android:paddingRight="@dimen/large_padding"
+        android:paddingTop="@dimen/small_padding"
+        android:paddingBottom="@dimen/small_padding"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_register"
+        android:textSize="@dimen/normal_txt_size"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:gravity="right"
+        android:text="@string/register_title"
+        android:paddingLeft="@dimen/large_padding"
+        android:paddingRight="@dimen/large_padding"
+        android:paddingTop="@dimen/small_padding"
+        android:paddingBottom="@dimen/small_padding"/>
+
+</LinearLayout>

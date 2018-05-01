@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="decstyle">
+        <attr name="background_color" format="color"/>
+        <attr name="text_color" format="color"/>
+        <attr name="button_color" format="color"/>
+        <attr name="disabled_answer" format="color"/>
+        <attr name="clicked_answer" format="color"/>
+        <attr name="edittext_hint" format="color"/>
+        <attr name="fab_color" format="color"/>
+
+    </declare-styleable>
+
+
+</resources>

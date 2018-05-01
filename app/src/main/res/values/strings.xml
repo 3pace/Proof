@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">AXIOM</string>
+    <string name="testing">ТЕСТИРОВАНИЕ</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="start_test_title">НАЧАТЬ</string>
+    <string name="colored">Видимость правильного ответа</string>
+    <string name="settings">НАСТРОЙКИ</string>
+    <string name="result_test_title">ТЕСТИРОВАНИЕ ЗАВЕРШЕНО</string>
+    <string name="stop_testing">ЗАВЕРШИТЬ</string>
+    <string name="question_db">РЕДАКТОР</string>
+    <string name="add_question_title">ВВЕДИТЕ ВОПРОС</string>
+    <string name="question_hint_example">ВОПРОС</string>
+    <string name="next_title">ДАЛЬШЕ</string>
+    <string name="add_answer_title">ДОБАВЬТЕ ВАРИАНТЫ ОТВЕТОВ</string>
+    <string name="answer_variable_title">ВАРИАНТ ОТВЕТА</string>
+    <string name="add_title">ДОБАВИТЬ</string>
+    <string name="answer_hint">ВАРИАНТ ОТВЕТА</string>
+    <string name="confirm_add_q_a_title">ВЫ ДЕЙСТВИТЕЛЬНО ХОТИТЕ ДОБАВИТЬ?</string>
+    <string name="confirm">ПОДТВЕРДИТЬ</string>
+    <string name="no_questions">В БАЗЕ НЕТ ВОПРОСОВ</string>
+    <string name="user">ПОЛЬЗОВАТЕЛЬ</string>
+    <string name="login_hint_example">ЛОГИН</string>
+    <string name="password_hint_example">ПАРОЛЬ</string>
+    <string name="password_confirm_hint_example">ПАРОЛЬ ЕЩЁ РАЗ</string>
+    <string name="done">ГОТОВО</string>
+    <string name="register_title">РЕГИСТРАЦИЯ</string>
+    <string name="new_answer">НОВЫЙ</string>
+    <string name="text">ТЕКСТ</string>
+    <string name="question_hint">ВОПРОС</string>
+    <string name="search_title">ПОИСК</string>
+    <string name="restart">ЕЩЁ РАЗ</string>
+    <string name="settings_on">ВКЛ.</string>
+    <string name="settings_off">ВЫКЛ.</string>
+    <string name="cycle_mode">Циклический режим</string>
+    <string name="question_size">Количество вопросов: </string>
+    <string name="viewed_questions">Просмотрено:</string>
+    <string name="new_cycle">Новый цикл</string>
+    <string name="cycle">Цикл:</string>
+    <string name="lesson">Дисциплина</string>
+    <string name="autoflipping">Автоперелистывание</string>
+    <string name="vy_nabrali">Вы набрали</string>
+    <string name="sovershili">Совершили</string>
+    <string name="ne_otevili">, Не ответили на</string>
+    <string name="nightmode">Тема</string>
+    <string name="day">День</string>
+    <string name="night">Ночь</string>
+    <string name="question_count">Количество вопросов</string>
+    <string name="update">Обновление</string>
+    <string name="update_available">Доступна новая база</string>
+    <string name="to_update">Обновить</string>
+    <string name="updating">Идёт обновление…</string>
+    <string name="updating_complete">Обновление завершено</string>
+</resources>

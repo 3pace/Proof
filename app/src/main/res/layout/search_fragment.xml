@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
+    style="@style/FragmentBackground"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <com.proof.ly.space.proof.CustomViews.MRecyclerView
+            android:id="@+id/rview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        <include layout="@layout/empty_view" />
+    </FrameLayout>
+
+    <EditText
+        android:id="@+id/etxt_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/question_hint"
+        android:inputType="textCapCharacters|textMultiLine"
+        android:maxLines="5"
+        android:padding="@dimen/normal_padding"
+        style="@style/EditTextTheme"/>
+</LinearLayout>
