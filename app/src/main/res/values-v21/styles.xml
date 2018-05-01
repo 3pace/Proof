@@ -17,7 +17,7 @@
         <item name="clicked_answer">@color/black</item>
         <item name="edittext_hint">@color/grey</item>
         <item name="fab_color">@color/colorPrimaryDark</item>
-
+        <item name="android:navigationBarColor">@color/darkBackground</item>
 
     </style>
     <style name="darktheme" parent="Theme.AppCompat.Light.NoActionBar">
