@@ -33,8 +33,8 @@ public class AddQAConfirmFragment extends Fragment implements FragmentInterface{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        qManager = ((MainActivity)getActivity()).getqManager();
-        dbManager = ((MainActivity)getActivity()).getDbManager();
+        qManager = ((MainActivity)getActivity()).getmQuestionManager();
+        dbManager = ((MainActivity)getActivity()).getmDBManager();
     }
 
     @Nullable

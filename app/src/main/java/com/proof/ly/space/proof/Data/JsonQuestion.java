@@ -5,19 +5,19 @@ package com.proof.ly.space.proof.Data;
  */
 
 public class JsonQuestion {
-    private int id;
-    private String jsonQuestion;
+    private int mId;
+    private String mJsonQuestion;
 
     public JsonQuestion(int id, String jsonQuestion) {
-        this.id = id;
-        this.jsonQuestion = jsonQuestion;
+        this.mId = id;
+        this.mJsonQuestion = jsonQuestion;
     }
 
     public int getId() {
-        return id;
+        return mId;
     }
 
     public String getJsonQuestion() {
-        return jsonQuestion;
+        return mJsonQuestion;
     }
 }

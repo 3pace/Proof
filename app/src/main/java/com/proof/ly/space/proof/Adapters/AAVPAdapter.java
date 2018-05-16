@@ -12,6 +12,7 @@ import com.proof.ly.space.proof.Fragments.RegisterFragment;
  */
 
 public class AAVPAdapter extends FragmentPagerAdapter {
+
     public AAVPAdapter(FragmentManager fm) {
         super(fm);
     }

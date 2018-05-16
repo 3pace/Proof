@@ -1,5 +1,6 @@
 package com.proof.ly.space.proof.Fragments.windows;
 
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,8 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.ImageView;
 
 import com.proof.ly.space.proof.Adapters.RecyclerSearchAdapter;
 import com.proof.ly.space.proof.CustomViews.MRecyclerView;
@@ -35,15 +35,15 @@ import static android.content.ContentValues.TAG;
 
 public class MSearchFragment extends Fragment implements FragmentInterface{
 
-    private MRecyclerView rview;
-    private RecyclerSearchAdapter adapter;
-    private ArrayList<SearchData> arrayList = new ArrayList<>();
-    private EditText etxt;
-    private DBManager dbManager;
-    private int visibleThreshold = 5;
-    private int lastVisibleItem, totalItemCount;
-    private int addItemCount = 5;
-    private boolean loading;
+    private MRecyclerView mRecyclerView;
+    private RecyclerSearchAdapter mAdapter;
+    private ArrayList<SearchData> mArrayList = new ArrayList<>();
+    private EditText mSearchEditText;
+    private DBManager mDBManager;
+    private int mVisibleThreshold = 5;
+    private int mLastVisibleItem, mTotalItemCount;
+    private int mAddItemCount = 5;
+    private boolean isLoading;
     private View mEmptyView;
 
     public MSearchFragment() {
@@ -71,24 +71,25 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
 
     @Override
     public void initViews(View itemView) {
-        rview = itemView.findViewById(R.id.rview);
-        etxt = itemView.findViewById(R.id.etxt_search);
+        mRecyclerView = itemView.findViewById(R.id.rview);
+        mSearchEditText = itemView.findViewById(R.id.etxt_search);
         mEmptyView = itemView.findViewById(R.id.img_empty);
+        ((ImageView) mEmptyView.findViewById(R.id.img_empty)).setColorFilter(((MainActivity)getActivity()).getDisabledColor(), PorterDuff.Mode.SRC_ATOP);
 
     }
 
     @Override
     public void initTypeface() {
-        etxt.setTypeface(((MainActivity)getActivity()).getTypeface());
+        mSearchEditText.setTypeface(((MainActivity)getActivity()).getTypeface());
     }
 
     @Override
     public void initOnClick() {
-        etxt.setOnLongClickListener(new View.OnLongClickListener() {
+        mSearchEditText.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                etxt.setText("");
-                adapter.filter(etxt.getText().toString());
+                mSearchEditText.setText("");
+                mAdapter.filter(mSearchEditText.getText().toString());
                 return true;
             }
         });
@@ -96,17 +97,17 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
 
     @Override
     public void initObjects() {
-        adapter = new RecyclerSearchAdapter(arrayList);
-        dbManager = ((MainActivity)getActivity()).getDbManager();
+        mAdapter = new RecyclerSearchAdapter(mArrayList);
+        mDBManager = ((MainActivity)getActivity()).getmDBManager();
     }
 
     @Override
     public void initSetters() {
-        rview.setLayoutManager(new LinearLayoutManager(getContext()));
-        rview.setAdapter(adapter);
-        rview.setHasFixedSize(true);
-        adapter.setTypeface(((MainActivity)getActivity()).getTypeface());
-        etxt.addTextChangedListener(new TextWatcher() {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(false);
+        mAdapter.setTypeface(((MainActivity)getActivity()).getTypeface());
+        mSearchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -114,7 +115,7 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.filter(s.toString());
+                mAdapter.filter(s.toString());
             }
 
             @Override
@@ -133,7 +134,7 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            arrayList.clear();
+            mArrayList.clear();
             initObjects();
             initSetters();
             initTypeface();
@@ -142,8 +143,8 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
         @Override
         protected Void doInBackground(Void... voids) {
 
-            //dbManager.getSearchHelper();
-            dbManager.generateSearchListFullFromLocalDb();
+            //mDBManager.getSearchHelper();
+            mDBManager.generateSearchListFullFromLocalDb();
             return null;
         }
 
@@ -151,9 +152,9 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Log.d(TAG, "onPostExecute: "+ LessonManager.CURRENT_DB);
-            adapter.setFull(dbManager.getSearchList(10));
-            adapter.setFullList(dbManager.getFullSearchList());
-            rview.setEmptyView(mEmptyView);
+            mAdapter.setFull(mDBManager.getSearchList(10));
+            mAdapter.setFullList(mDBManager.getFullSearchList());
+            mRecyclerView.setEmptyView(mEmptyView);
             initOnClick();
         }
     }
@@ -162,33 +163,34 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            loading = true;
+            isLoading = true;
         }
 
         @Override
         protected Void doInBackground(Integer... integers) {
-            //arrayList.addAll(dbManager.getSearchListLoad(integers[0],integers[1]));
-            adapter.addLoadedItems(dbManager.getSearchListLoad(integers[0],integers[1]),integers[0],integers[1]);
+            //mArrayList.addAll(mDBManager.getSearchListLoad(integers[0],integers[1]));
+            mAdapter.addLoadedItems(mDBManager.getSearchListLoad(integers[0],integers[1]),integers[0],integers[1]);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            adapter.notifyDataSetChanged();
-            loading = false;
+            mAdapter.notifyDataSetChanged();
+            isLoading = false;
         }
     }
     public void initLoadMore(){
-        final LinearLayoutManager lmanager = (LinearLayoutManager) rview.getLayoutManager();
-        rview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        final LinearLayoutManager lmanager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                totalItemCount = lmanager.getItemCount();
-                lastVisibleItem = lmanager.findLastVisibleItemPosition();
-                if (!loading && (lastVisibleItem+visibleThreshold) >= totalItemCount && etxt.getText().length() <=0) {
-                    new loadData().execute(adapter.getItemCount(),addItemCount);
+                mTotalItemCount = lmanager.getItemCount();
+                mLastVisibleItem = lmanager.findLastVisibleItemPosition();
+                if (!isLoading && (mLastVisibleItem + mVisibleThreshold) >= mTotalItemCount && mSearchEditText.getText().length() <=0) {
+                        new loadData().execute(mAdapter.getItemCount(), mAddItemCount);
+
                 }
             }
         });

@@ -4,12 +4,16 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.proof.ly.space.proof.Fragments.windows.TMenuFragment;
 import com.proof.ly.space.proof.Interfaces.FragmentInterface;
 import com.proof.ly.space.proof.MainActivity;
 import com.proof.ly.space.proof.R;
@@ -21,8 +25,8 @@ import com.proof.ly.space.proof.Utils.ClickEffect;
 
 public class RegisterFragment extends Fragment implements FragmentInterface {
 
-    private EditText etxt_login,etxt_pswrd,etxt_pswrd_c;
-    private TextView txt_next;
+    private TextView txt;
+    private Button btn;
 
     public static Fragment getInstance(){
         return new RegisterFragment();
@@ -46,36 +50,27 @@ public class RegisterFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initViews(View itemView) {
-        etxt_login = itemView.findViewById(R.id.etxt_login);
-        etxt_pswrd = itemView.findViewById(R.id.etxt_password);
-        etxt_pswrd_c = itemView.findViewById(R.id.etxt_password_confirm);
-        txt_next = itemView.findViewById(R.id.txt_next);
+        txt = itemView.findViewById(R.id.txt_info);
+        btn = itemView.findViewById(R.id.btn_back);
 
     }
 
     @Override
     public void initTypeface() {
         Typeface typeface = ((MainActivity) getActivity()).getTypeface();
-        etxt_login.setTypeface(typeface);
-        etxt_pswrd.setTypeface(typeface);
-        etxt_pswrd_c.setTypeface(typeface);
-        txt_next.setTypeface(typeface);
+        txt.setTypeface(typeface);
+        btn.setTypeface(typeface);
     }
 
     @Override
     public void initOnClick() {
-        txt_next.setOnClickListener(new View.OnClickListener() {
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                String username = etxt_login.getText().toString().trim().toUpperCase();
-                String password = etxt_pswrd.getText().toString().trim();
-                String password_c = etxt_pswrd_c.getText().toString().trim();
-                if (username.length() > 3 && password.equals(password_c)){
-                    confirm(username,password);
-                    Log.d("TEST", "onClick: "+true);
-                }
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).replaceFragmentWithoutBackstack(new TMenuFragment(),MainActivity.MENU_FRAGMENT_TAG);
             }
         });
+
     }
 
     @Override
@@ -85,11 +80,8 @@ public class RegisterFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initSetters() {
-        ClickEffect.setView(txt_next);
+
     }
 
-    public void confirm(String username,String password){
-        ((MainActivity)getActivity()).getDbManager().addUser(username,password);
-        getActivity().onBackPressed();
-    }
+
 }

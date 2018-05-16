@@ -17,8 +17,8 @@ public class SettingsManager {
     private final String AUTOFLIP = "autoflip";
     private final String NIGHTMODE = "nightmode";
     private final String QUESCOUNT = "quescount";
-    private final String DB_VERSION = "db_version";
-    public static int db_version;
+    private final String DB_VERSION = "mLocalDBVersion";
+    public static int mLocalDBVersion;
     public static boolean colored,cycleMode,autoflip,nighmode,quesCount;
 
     public SettingsManager(Context context) {

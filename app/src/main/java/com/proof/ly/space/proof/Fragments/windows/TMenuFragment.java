@@ -99,18 +99,19 @@ public class TMenuFragment extends Fragment implements FragmentInterface {
                 switch (pos) {
                     case 0:
                         //startActivity(new Intent(MainActivity.this, TestingActivity.class));
-                        ((MainActivity) getActivity()).replaceFragment(new MTestingFragment(), "testing");
+                        ((MainActivity) getActivity()).replaceFragment(new MTestingFragment(), getResources().getString(R.string.tag_testing));
+
                         break;
                     case 1:
                         //startActivity(new Intent(MainActivity.this, QuestionManagerActivity.class));
-                        ((MainActivity) getActivity()).replaceFragment(new MQuestionManagerFragment());
+                        ((MainActivity) getActivity()).replaceFragment(new MQuestionManagerFragment(), getResources().getString(R.string.tag_qmanager));
                         break;
                     case 2:
                         //startActivity(new Intent(MainActivity.this, QuestionManagerActivity.class));
-                        ((MainActivity) getActivity()).replaceFragment(new MSearchFragment());
+                        ((MainActivity) getActivity()).replaceFragment(new MSearchFragment(), getResources().getString(R.string.tag_search));
                         break;
                     case 3:
-                        ((MainActivity) getActivity()).replaceFragment(new MSettingsFragment());
+                        ((MainActivity) getActivity()).replaceFragment(new MSettingsFragment(), getResources().getString(R.string.tag_settings));
                         break;
 
                 }
@@ -124,7 +125,7 @@ public class TMenuFragment extends Fragment implements FragmentInterface {
                         if (!isLoading) {
                             Button btn = (Button) view;
                             ((MainActivity) getActivity()).startAsyncLoad();
-                            btn.setText(((MainActivity) getActivity()).getLessonManager().changeLesson());
+                            btn.setText(((MainActivity) getActivity()).getmLessonManager().changeLesson());
                         }
                         break;
                 }
@@ -146,6 +147,6 @@ public class TMenuFragment extends Fragment implements FragmentInterface {
         rview.setAdapter(adapter);
         rview.setHasFixedSize(true);
         OverScrollDecoratorHelper.setUpOverScroll(rview, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
-        adapter.setLessonManager(((MainActivity) getActivity()).getLessonManager());
+        adapter.setLessonManager(((MainActivity) getActivity()).getmLessonManager());
     }
 }

@@ -48,7 +48,7 @@ public class AddAnswersFragment extends Fragment implements FragmentInterface{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        qManager = ((MainActivity)getActivity()).getqManager();
+        qManager = ((MainActivity)getActivity()).getmQuestionManager();
 
     }
 
@@ -126,6 +126,7 @@ public class AddAnswersFragment extends Fragment implements FragmentInterface{
     @Override
     public void initSetters() {
         adapter.setTypeface(typeface);
+        adapter.setDisabledColor(((MainActivity)getActivity()).getDisabledColor());
         rview.setLayoutManager(new LinearLayoutManager(getContext()));
         rview.setAdapter(adapter);
         rview.setHasFixedSize(false);

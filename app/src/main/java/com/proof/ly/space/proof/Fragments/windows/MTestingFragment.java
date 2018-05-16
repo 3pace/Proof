@@ -21,7 +21,6 @@ import com.proof.ly.space.proof.CustomViews.MViewPager;
 import com.proof.ly.space.proof.Data.JsonQuestion;
 import com.proof.ly.space.proof.Data.Question;
 import com.proof.ly.space.proof.Fragments.TestingFragment;
-import com.proof.ly.space.proof.Helpers.DBManager;
 import com.proof.ly.space.proof.Helpers.QManager;
 import com.proof.ly.space.proof.Helpers.SettingsManager;
 import com.proof.ly.space.proof.Helpers.TinyDB;
@@ -64,7 +63,7 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        settingsManager = ((MainActivity)getActivity()).getSettingsManager();
+        settingsManager = ((MainActivity)getActivity()).getmSettingsManager();
         colored = settingsManager.getColoredState();
         cycleMode = settingsManager.getCycleModeState();
         autoflip = settingsManager.getAutoflipState();
@@ -136,7 +135,7 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
 
         vpadapter = new ViewPagerAdapter(getChildFragmentManager(), questions.size());
         handler = new Handler();
-        qManager = ((MainActivity)getActivity()).getqManager();
+        qManager = ((MainActivity)getActivity()).getmQuestionManager();
 
 
     }
@@ -222,17 +221,17 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
     public void stopTesting() {
         for (int i = 0; i < questionsList.size(); i++) {
             if (!questionsList.get(i).isChecked()) {
-                for (int j = 0; j < questionsList.get(i).getAnswers().size(); j++) {
-                    if (questionsList.get(i).getAnswers().get(j).isCorrect()) {
-                        questionsList.get(i).getAnswers().get(j).setChecked(1);
-                        questionsList.get(i).getAnswers().get(j).setCorrectChecked(true);
+                for (int j = 0; j < questionsList.get(i).getArrayListAnswers().size(); j++) {
+                    if (questionsList.get(i).getArrayListAnswers().get(j).isCorrect()) {
+                        questionsList.get(i).getArrayListAnswers().get(j).setIsChecked(1);
+                        questionsList.get(i).getArrayListAnswers().get(j).setCorrectChecked(true);
                     }
 
                 }
-                for (int j = 0; j < questionsList.get(i).getAnswers().size(); j++) {
-                    if (questionsList.get(i).getAnswers().get(j).getChecked() != 1) {
-                        questionsList.get(i).getAnswers().get(j).setChecked(2);
-                        questionsList.get(i).getAnswers().get(j).setEnabled(false);
+                for (int j = 0; j < questionsList.get(i).getArrayListAnswers().size(); j++) {
+                    if (questionsList.get(i).getArrayListAnswers().get(j).getIsChecked() != 1) {
+                        questionsList.get(i).getArrayListAnswers().get(j).setIsChecked(2);
+                        questionsList.get(i).getArrayListAnswers().get(j).setEnabled(false);
                     }
                 }
 
@@ -289,17 +288,13 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
                 stopTesting();
                 break;
             case R.id.settings:
-                ((MainActivity)getActivity()).replaceFragment(new MSettingsFragment());
+                ((MainActivity) getActivity()).replaceFragment(new MSettingsFragment(),getResources().getString(R.string.tag_settings));
                 break;
         }
         return false;
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
 
-        super.onPrepareOptionsMenu(menu);
-    }
 
     public TinyDB getTinyDB() {
 

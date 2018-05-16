@@ -2,7 +2,6 @@ package com.proof.ly.space.proof.CustomViews;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -35,74 +34,74 @@ public class MSnackbar {
     private enum Type {
         DEFAULT(null, null, null);
 
-        private Integer color;
-        private Integer iconResId;
-        private Integer standardTextColor;
+        private Integer mColor;
+        private Integer mIconResId;
+        private Integer mStandardTextColor;
 
         Type(@ColorInt Integer color, @DrawableRes Integer iconResId, @ColorInt Integer standardTextColor) {
-            this.color = color;
-            this.iconResId = iconResId;
-            this.standardTextColor = standardTextColor;
+            this.mColor = color;
+            this.mIconResId = iconResId;
+            this.mStandardTextColor = standardTextColor;
         }
 
         public Integer getColor() {
-            return color;
+            return mColor;
         }
 
         public Drawable getIcon(Context context) {
-            if (iconResId == null) return null;
-            Drawable drawable = ContextCompat.getDrawable(context, iconResId);
+            if (mIconResId == null) return null;
+            Drawable drawable = ContextCompat.getDrawable(context, mIconResId);
             if (drawable != null) {
-                drawable = MSnackUtils.tintDrawable(drawable, standardTextColor);
+                drawable = MSnackUtils.tintDrawable(drawable, mStandardTextColor);
             }
             return drawable;
         }
 
 
         public Integer getStandardTextColor() {
-            return standardTextColor;
+            return mStandardTextColor;
         }
     }
 
-    private final Builder builder;
+    private final Builder mBuilder;
 
     private MSnackbar(Builder builder) {
-        this.builder = builder;
+        this.mBuilder = builder;
     }
 
     private Snackbar make() {
 
-        Snackbar snackbar = Snackbar.make(builder.view, builder.text, builder.duration);
+        Snackbar snackbar = Snackbar.make(mBuilder.view, mBuilder.text, mBuilder.duration);
 
-        if (builder.actionClickListener != null || builder.actionText != null) {
-            if (builder.actionClickListener == null) builder.actionClickListener = new View.OnClickListener() {
+        if (mBuilder.actionClickListener != null || mBuilder.actionText != null) {
+            if (mBuilder.actionClickListener == null) mBuilder.actionClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                 }
             };
-            snackbar.setAction(builder.actionText, builder.actionClickListener);
-            if (builder.actionTextColor == null) builder.actionTextColor = builder.type.getStandardTextColor();
-            if (builder.actionTextColors != null) snackbar.setActionTextColor(builder.actionTextColors);
-            else if (builder.actionTextColor != null) snackbar.setActionTextColor(builder.actionTextColor);
+            snackbar.setAction(mBuilder.actionText, mBuilder.actionClickListener);
+            if (mBuilder.actionTextColor == null) mBuilder.actionTextColor = mBuilder.type.getStandardTextColor();
+            if (mBuilder.actionTextColors != null) snackbar.setActionTextColor(mBuilder.actionTextColors);
+            else if (mBuilder.actionTextColor != null) snackbar.setActionTextColor(mBuilder.actionTextColor);
 
         }
 
         Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
 
-        if (builder.backgroundColor == null) builder.backgroundColor = builder.type.getColor();
-        if (builder.backgroundColor != null) snackbarLayout.setBackgroundColor(builder.backgroundColor);
+        if (mBuilder.backgroundColor == null) mBuilder.backgroundColor = mBuilder.type.getColor();
+        if (mBuilder.backgroundColor != null) snackbarLayout.setBackgroundColor(mBuilder.backgroundColor);
 
         TextView actionText = snackbarLayout.findViewById(android.support.design.R.id.snackbar_action);
-        if (builder.actionTextSize != null) {
-            if (builder.actionTextSizeUnit != null) actionText.setTextSize(builder.actionTextSizeUnit, builder.actionTextSize);
-            else actionText.setTextSize(builder.actionTextSize);
+        if (mBuilder.actionTextSize != null) {
+            if (mBuilder.actionTextSizeUnit != null) actionText.setTextSize(mBuilder.actionTextSizeUnit, mBuilder.actionTextSize);
+            else actionText.setTextSize(mBuilder.actionTextSize);
         }
         Typeface actionTextTypeface = actionText.getTypeface();
-        if (builder.actionTextTypeface != null)
-            actionTextTypeface = builder.actionTextTypeface;
-        if (builder.actionTextTypefaceStyle != null) {
-            actionText.setTypeface(actionTextTypeface, builder.actionTextTypefaceStyle);
+        if (mBuilder.actionTextTypeface != null)
+            actionTextTypeface = mBuilder.actionTextTypeface;
+        if (mBuilder.actionTextTypefaceStyle != null) {
+            actionText.setTypeface(actionTextTypeface, mBuilder.actionTextTypefaceStyle);
         } else {
             actionText.setTypeface(actionTextTypeface);
         }
@@ -110,38 +109,38 @@ public class MSnackbar {
 
         TextView text = snackbarLayout.findViewById(android.support.design.R.id.snackbar_text);
 
-        if (builder.textSize != null) {
-            if (builder.textSizeUnit != null) text.setTextSize(builder.textSizeUnit, builder.textSize);
-            else text.setTextSize(builder.textSize);
+        if (mBuilder.textSize != null) {
+            if (mBuilder.textSizeUnit != null) text.setTextSize(mBuilder.textSizeUnit, mBuilder.textSize);
+            else text.setTextSize(mBuilder.textSize);
         }
 
         Typeface textTypeface = text.getTypeface();
-        if (builder.textTypeface != null)
-            textTypeface = builder.textTypeface;
-        if (builder.textTypefaceStyle != null) {
-            text.setTypeface(textTypeface, builder.textTypefaceStyle);
+        if (mBuilder.textTypeface != null)
+            textTypeface = mBuilder.textTypeface;
+        if (mBuilder.textTypefaceStyle != null) {
+            text.setTypeface(textTypeface, mBuilder.textTypefaceStyle);
         } else {
             text.setTypeface(textTypeface);
         }
 
 
-        if (builder.textColor == null) builder.textColor = builder.type.getStandardTextColor();
-        if (builder.textColors != null) text.setTextColor(builder.textColors);
-        else if (builder.textColor != null) text.setTextColor(builder.textColor);
-        text.setMaxLines(builder.maxLines);
-        text.setGravity(builder.centerText ? Gravity.CENTER : Gravity.CENTER_VERTICAL);
-        if (builder.centerText && Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
+        if (mBuilder.textColor == null) mBuilder.textColor = mBuilder.type.getStandardTextColor();
+        if (mBuilder.textColors != null) text.setTextColor(mBuilder.textColors);
+        else if (mBuilder.textColor != null) text.setTextColor(mBuilder.textColor);
+        text.setMaxLines(mBuilder.maxLines);
+        text.setGravity(mBuilder.centerText ? Gravity.CENTER : Gravity.CENTER_VERTICAL);
+        if (mBuilder.centerText && Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
             text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
-        if (builder.icon == null) builder.icon = builder.type.getIcon(builder.view.getContext());
-        if (builder.icon != null) {
+        if (mBuilder.icon == null) mBuilder.icon = mBuilder.type.getIcon(mBuilder.view.getContext());
+        if (mBuilder.icon != null) {
             Drawable transparentHelperDrawable = null;
-            if (builder.centerText && TextUtils.isEmpty(builder.actionText)) {
-                transparentHelperDrawable = MSnackUtils.makeTransparentDrawable(builder.view.getContext(),
-                        builder.icon.getIntrinsicWidth(),
-                        builder.icon.getIntrinsicHeight());
+            if (mBuilder.centerText && TextUtils.isEmpty(mBuilder.actionText)) {
+                transparentHelperDrawable = MSnackUtils.makeTransparentDrawable(mBuilder.view.getContext(),
+                        mBuilder.icon.getIntrinsicWidth(),
+                        mBuilder.icon.getIntrinsicHeight());
             }
-            text.setCompoundDrawablesWithIntrinsicBounds(builder.icon, null, transparentHelperDrawable, null);
+            text.setCompoundDrawablesWithIntrinsicBounds(mBuilder.icon, null, transparentHelperDrawable, null);
             text.setCompoundDrawablePadding(text.getResources()
                     .getDimensionPixelOffset(R.dimen.snacky_icon_padding));
         }

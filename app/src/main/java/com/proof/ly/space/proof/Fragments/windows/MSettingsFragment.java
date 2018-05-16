@@ -1,5 +1,7 @@
 package com.proof.ly.space.proof.Fragments.windows;
 
+import android.content.Context;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -7,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -25,9 +29,9 @@ import static com.proof.ly.space.proof.Helpers.SettingsManager.quesCount;
  */
 
 public class MSettingsFragment extends Fragment {
-    private RecyclerView rview;
-    private RecyclerSettingsAdapter adapter;
-    private SettingsManager settingsManager;
+    private RecyclerSettingsAdapter mAdapter;
+    private SettingsManager mSettingsManager;
+    private Context mContext;
 
     public MSettingsFragment() {
     }
@@ -35,12 +39,12 @@ public class MSettingsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        settingsManager = new SettingsManager(getContext());
-        cycleMode = settingsManager.getCycleModeState();
-        autoflip = settingsManager.getAutoflipState();
-        nighmode = settingsManager.getNightmodeState();
-        quesCount = settingsManager.getQuesCount();
-        adapter = new RecyclerSettingsAdapter(getActivity());
+        mSettingsManager = new SettingsManager(mContext);
+        cycleMode = mSettingsManager.getCycleModeState();
+        autoflip = mSettingsManager.getAutoflipState();
+        nighmode = mSettingsManager.getNightmodeState();
+        quesCount = mSettingsManager.getQuesCount();
+        mAdapter = new RecyclerSettingsAdapter((MainActivity) getActivity());
         setHasOptionsMenu(true);
     }
 
@@ -50,22 +54,45 @@ public class MSettingsFragment extends Fragment {
         return inflater.inflate(R.layout.settings_fragment, container, false);
     }
 
+
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rview = view.findViewById(R.id.rview);
-        rview.setLayoutManager(new LinearLayoutManager(getContext()));
-        rview.setAdapter(adapter);
-        adapter.addSetting(getResources().getString(R.string.cycle_mode), cycleMode);
-        adapter.addSetting(getResources().getString(R.string.autoflipping), autoflip);
-        adapter.addSetting(getResources().getString(R.string.question_count), quesCount);
-        adapter.addSetting(getResources().getString(R.string.nightmode), nighmode);
-        adapter.setTypeface(((MainActivity) getActivity()).getTypeface());
-        adapter.setSettingsManager(settingsManager);
+        RecyclerView mRecyclerView = view.findViewById(R.id.rview);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.addSetting(getResources().getString(R.string.cycle_mode), cycleMode);
+        mAdapter.addSetting(getResources().getString(R.string.autoflipping), autoflip);
+        mAdapter.addSetting(getResources().getString(R.string.question_count), quesCount);
+        mAdapter.addSetting(getResources().getString(R.string.nightmode), nighmode);
+        mAdapter.setTypeface(((MainActivity) getActivity()).getTypeface());
+        mAdapter.setSettingsManager(mSettingsManager);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
+        inflater.inflate(R.menu.menu_settings, menu);
+        if (menu.getItem(0).getIcon() != null && getActivity()  != null)
+            menu.getItem(0).getIcon().setColorFilter(((MainActivity) getActivity()).getClickedColor(), PorterDuff.Mode.SRC_ATOP);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.update:
+                if (getActivity() != null)
+                    ((MainActivity) getActivity()).getmDBManager().checkNewDatabaseVersionFromClick();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
     }
 }

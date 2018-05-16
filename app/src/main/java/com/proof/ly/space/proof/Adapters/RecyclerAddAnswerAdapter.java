@@ -1,12 +1,17 @@
 package com.proof.ly.space.proof.Adapters;
 
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.proof.ly.space.proof.Data.NewAnswers;
 import com.proof.ly.space.proof.Interfaces.OnItemClickView;
 import com.proof.ly.space.proof.R;
@@ -20,13 +25,14 @@ import java.util.ArrayList;
 
 public class RecyclerAddAnswerAdapter extends RecyclerView.Adapter<RecyclerAddAnswerAdapter.AnswerHolder> {
 
-    private ArrayList<NewAnswers> arrayList;
-    private Typeface typeface;
+    private ArrayList<NewAnswers> mArrayList;
+    private Typeface mTypeface;
     private OnItemClickView onItemClick;
+    private int disabledColor = 0;
 
 
     public RecyclerAddAnswerAdapter() {
-        arrayList = new ArrayList<>();
+        mArrayList = new ArrayList<>();
     }
 
     @Override
@@ -41,77 +47,91 @@ public class RecyclerAddAnswerAdapter extends RecyclerView.Adapter<RecyclerAddAn
     @Override
     public void onBindViewHolder(AnswerHolder h, int position) {
 
-            NewAnswers newAnswers = arrayList.get(position);
+
+        NewAnswers newAnswers = mArrayList.get(position);
+        String answer = (position + 1) + " " + newAnswers.getAnswer();
+        Spannable spannable = new SpannableString(answer);
+        int start = answer.indexOf(" ");
+
+        h.txt_answer.setTextColor(disabledColor);
+        if (answer.length() > 0)
             if (newAnswers.isCorrect()) {
-                h.txt_answer.setTextColor(h.itemView.getContext().getResources().getColor(R.color.colorPrimary));
+                spannable.setSpan(new ForegroundColorSpan(h.itemView.getContext().getResources().getColor(R.color.colorPrimary)),
+                        start,
+                        answer.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             } else {
-                h.txt_answer.setTextColor(h.itemView.getContext().getResources().getColor(R.color.colorAccent));
+                spannable.setSpan(new ForegroundColorSpan(h.itemView.getContext().getResources().getColor(R.color.colorAccent)),
+                        start,
+                        answer.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            StringBuilder stringBuilder = new StringBuilder();
-            h.txt_answer.setText(stringBuilder.append("#").append((position + 1)).append(" ").append(newAnswers.getAnswer()));
+        h.txt_answer.setText(spannable);
 
     }
-
 
 
     @Override
     public int getItemCount() {
-        return arrayList.size();
+        return mArrayList.size();
     }
-
 
 
     class AnswerHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView txt_answer;
         private ImageView img_clear;
+
         AnswerHolder(View itemView) {
             super(itemView);
             txt_answer = itemView.findViewById(R.id.txt_answer);
             img_clear = itemView.findViewById(R.id.img_clear);
-            txt_answer.setTypeface(typeface);
+            txt_answer.setTypeface(mTypeface);
             ClickEffect.setView(txt_answer);
             ClickEffect.setView(img_clear);
             txt_answer.setOnClickListener(this);
             img_clear.setOnClickListener(this);
+            img_clear.setColorFilter(disabledColor, PorterDuff.Mode.SRC_ATOP);
 
         }
 
         @Override
         public void onClick(View view) {
-            onItemClick.onClick(getAdapterPosition(),view);
+            onItemClick.onClick(getAdapterPosition(), view);
             img_clear.setEnabled(false);
         }
     }
 
 
     public void setTypeface(Typeface typeface) {
-        this.typeface = typeface;
+        mTypeface = typeface;
     }
 
     public void addAnswer(String answer) {
-        arrayList.add(new NewAnswers(answer, false));
-        notifyItemInserted(arrayList.size());
-
+        mArrayList.add(new NewAnswers(answer, false));
+        notifyItemInserted(mArrayList.size());
 
 
     }
 
-    public void removeAnswer(int pos){
-        arrayList.remove(pos);
+    public void removeAnswer(int pos) {
+        mArrayList.remove(pos);
         notifyItemRemoved(pos);
     }
 
     public void setAnswerCorrect(int pos) {
 
-        arrayList.get(pos).setCorrect(!arrayList.get(pos).isCorrect());
+        mArrayList.get(pos).setCorrect(!mArrayList.get(pos).isCorrect());
         notifyDataSetChanged();
     }
 
     public ArrayList<NewAnswers> getArrayList() {
-        return arrayList;
+        return mArrayList;
     }
 
 
+    public void setDisabledColor(int disabledColor) {
+        this.disabledColor = disabledColor;
+    }
 
     public void setOnItemClick(OnItemClickView onItemClick) {
         this.onItemClick = onItemClick;

@@ -93,14 +93,14 @@ public class StartFragment extends Fragment implements FragmentInterface {
 
             if (qCount == 0) {
                 nullAnswers();
-                if (((MainActivity) getActivity()).getDbManager().isAllQuestionsViewed()) {
+                if (((MainActivity) getActivity()).getmDBManager().isAllQuestionsViewed()) {
                     btn_start.setText(getResources().getString(R.string.new_cycle).toUpperCase());
                     btn_start.setVisibility(View.VISIBLE);
                     btn_start.setClickable(true);
                     btn_start.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            ((MainActivity) getActivity()).getDbManager().newCycle();
+                            ((MainActivity) getActivity()).getmDBManager().newCycle();
                             getActivity().onBackPressed();
                         }
                     });
@@ -117,15 +117,15 @@ public class StartFragment extends Fragment implements FragmentInterface {
                         .append("\n")
                         .append(getResources().getString(R.string.viewed_questions))
                         .append(" ")
-                        .append(((MainActivity) getActivity()).getDbManager().getViewedPercent())
+                        .append(((MainActivity) getActivity()).getmDBManager().getViewedPercent())
                         .append("%")
                         .append("\n")
                         .append(getResources().getString(R.string.cycle))
                         .append(" ")
-                        .append(((MainActivity) getActivity()).getDbManager().getCycleNum())
+                        .append(((MainActivity) getActivity()).getmDBManager().getCycleNum())
                         ;
 
-            txt_info.setText(text.toString().toUpperCase());
+            txt_info.setText(text.toString());
         }
     }
     private void nullAnswers(){
@@ -138,7 +138,7 @@ public class StartFragment extends Fragment implements FragmentInterface {
     }
 
     private int getQuestionsCount(){
-        return ((MainActivity) getActivity()).getqManager().getQ().size();
+        return ((MainActivity) getActivity()).getmQuestionManager().getQ().size();
     }
 
 

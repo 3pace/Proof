@@ -3,6 +3,7 @@ package com.proof.ly.space.proof.Adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+
 import com.proof.ly.space.proof.Fragments.ResultFragment;
 import com.proof.ly.space.proof.Fragments.StartFragment;
 import com.proof.ly.space.proof.Fragments.TestingFragment;
@@ -13,23 +14,23 @@ import com.proof.ly.space.proof.Fragments.TestingFragment;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    private int count = 0;
-    public ViewPagerAdapter(FragmentManager fm,int count) {
+    private int mCount;
+
+    public ViewPagerAdapter(FragmentManager fm, int count) {
         super(fm);
-        this.count = count;
+        this.mCount = count;
     }
 
     @Override
     public Fragment getItem(int position) {
 
-        if (position==0) {
+        if (position == 0) {
             return StartFragment.getInstance(position);
         }
-        if (position==count+1 && count > 2) {
+        if (position == mCount + 1 && mCount > 2) {
             return ResultFragment.getInstance(position);
-        }
-        else if (position <= count) {
-            return TestingFragment.getInstance(position-1);
+        } else if (position <= mCount) {
+            return TestingFragment.getInstance(position - 1);
 
 
         }
@@ -37,7 +38,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public void setCount(int count) {
-        this.count = count;
+        this.mCount = count;
         notifyDataSetChanged();
     }
 
@@ -48,7 +49,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return count+2;
+        return mCount + 2;
     }
 
     @Override

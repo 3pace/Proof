@@ -2,6 +2,7 @@ package com.proof.ly.space.proof.Adapters;
 
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,16 +19,16 @@ import java.util.Locale;
  */
 
 public class RecyclerSearchAdapter extends RecyclerView.Adapter<RecyclerSearchAdapter.ItemHolder> {
-    private ArrayList<SearchData> arrayList;
-    private ArrayList<SearchData> filterList;
-    private ArrayList<SearchData> fullList;
-    private Typeface typeface;
+    private ArrayList<SearchData> mArrayList;
+    private ArrayList<SearchData> mFilterList;
+    private ArrayList<SearchData> mFullList;
+    private Typeface mTypeface;
 
 
     public RecyclerSearchAdapter(ArrayList<SearchData> arrayList) {
-        this.filterList = new ArrayList<>();
-        this.arrayList = arrayList;
-        this.filterList.addAll(arrayList);
+        this.mFilterList = new ArrayList<>();
+        this.mArrayList = arrayList;
+        this.mFilterList.addAll(arrayList);
 
 
     }
@@ -41,55 +42,59 @@ public class RecyclerSearchAdapter extends RecyclerView.Adapter<RecyclerSearchAd
     @Override
     public void onBindViewHolder(ItemHolder h, int position) {
 
-        h.txt_q.setText(filterList.get(position).getQuestion().toUpperCase().trim());
-        h.txt_a.setText(filterList.get(position).getAnswer().toUpperCase().trim());
+        h.mTextViewQuestion.setText(mFilterList.get(position).getQuestion().trim());
+        h.mTextViewAnswer.setText(mFilterList.get(position).getAnswer().trim());
 
     }
 
     @Override
     public int getItemCount() {
-        return filterList.size();
+        return mFilterList.size();
     }
 
 
     class ItemHolder extends RecyclerView.ViewHolder {
-        private TextView txt_q, txt_a;
+        private TextView mTextViewQuestion, mTextViewAnswer;
 
         ItemHolder(View itemView) {
             super(itemView);
-            txt_q = itemView.findViewById(R.id.txt_question);
-            txt_a = itemView.findViewById(R.id.txt_answer);
-            txt_q.setTypeface(typeface);
-            txt_a.setTypeface(typeface);
+            mTextViewQuestion = itemView.findViewById(R.id.txt_question);
+            mTextViewAnswer = itemView.findViewById(R.id.txt_answer);
+            mTextViewQuestion.setTypeface(mTypeface);
+            mTextViewAnswer.setTypeface(mTypeface);
         }
     }
 
 
     public void setTypeface(Typeface typeface) {
-        this.typeface = typeface;
+        this.mTypeface = typeface;
     }
 
     public void addLoadedItems(ArrayList<SearchData> arrayList, int start, int end) {
+
         int max = (start + end);
         if (arrayList.size() <= (start + end)) max = arrayList.size();
         for (int i = start; i < max; i++) {
-            filterList.add(new SearchData(arrayList.get(i).getQuestion(), arrayList.get(i).getAnswer()));
+            mFilterList.add(new SearchData(arrayList.get(i).getQuestion(), arrayList.get(i).getAnswer()));
         }
+
+        Log.d("search", "size " + mFilterList.size() + " start - " + start + " end - " + end);
     }
 
     public void filter(String inputText) {
         boolean find = false;
         inputText = inputText.toLowerCase(Locale.getDefault()).replace(",", " ");
         String[] inputArray = inputText.split(" ");
-        filterList.clear();
+        mFilterList.clear();
 
         if (inputText.length() == 0) {
-            filterList.addAll(arrayList);
+            mFilterList.clear();
+            mFilterList.addAll(mArrayList);
         } else {
-            for (int i = 0; i < fullList.size(); i++) {
-                SearchData searchData = fullList.get(i);
+            for (int i = 0; i < mFullList.size(); i++) {
+                SearchData searchData = mFullList.get(i);
                 if (inputArray.length == 1 && searchData.getQuestion().toLowerCase().replace(",", " ").contains(inputText)) {
-                    filterList.add(searchData);
+                    mFilterList.add(searchData);
                 }
                 if (inputArray.length > 1) {
                     int length = inputArray.length;
@@ -105,23 +110,25 @@ public class RecyclerSearchAdapter extends RecyclerView.Adapter<RecyclerSearchAd
                     }
                 }
                 if (find) {
-                    filterList.add(searchData);
+                    mFilterList.add(searchData);
                 }
 
             }
         }
         notifyDataSetChanged();
+        Log.d("search", "filter");
     }
 
     public void setFull(ArrayList<SearchData> arrayList) {
-        filterList.clear();
+        mFilterList.clear();
         for (int i = 0; i < arrayList.size(); i++) {
-            filterList.add(new SearchData(arrayList.get(i).getQuestion(), arrayList.get(i).getAnswer()));
+            mFilterList.add(new SearchData(arrayList.get(i).getQuestion(), arrayList.get(i).getAnswer()));
             notifyItemInserted(i);
         }
+        Log.d("search", "setFull");
     }
 
     public void setFullList(ArrayList<SearchData> fullList) {
-        this.fullList = fullList;
+        this.mFullList = fullList;
     }
 }

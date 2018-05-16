@@ -5,23 +5,23 @@ package com.proof.ly.space.proof.Data;
  */
 
 public class NewAnswers {
-    private String answer;
-    private boolean correct = false;
+    private String mAnswer;
+    private boolean mIsCorrect;
 
-    public NewAnswers(String answer, boolean correct) {
-        this.answer = answer;
-        this.correct = correct;
+    public NewAnswers(String answer, boolean mIsCorrect) {
+        this.mAnswer = answer;
+        this.mIsCorrect = mIsCorrect;
     }
 
     public String getAnswer() {
-        return answer;
+        return mAnswer;
     }
 
     public boolean isCorrect() {
-        return correct;
+        return mIsCorrect;
     }
 
     public void setCorrect(boolean correct) {
-        this.correct = correct;
+        this.mIsCorrect = correct;
     }
 }

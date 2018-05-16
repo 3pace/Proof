@@ -5,33 +5,33 @@ package com.proof.ly.space.proof.Data;
  */
 
 public class Answers {
-    private String answer;
-    private boolean correct = false;
-    private int checked = 0;
-    private boolean correctChecked = false;
-    private boolean enabled = true;
-    private boolean clicked = false;
+    private String mAnswer;
+    private boolean mIsCorrect;
+    private int mIsChecked = 0;
+    private boolean mIsCorrectChecked = false;
+    private boolean mIsEnabled = true;
+    private boolean mIsClicked = false;
 
 
     public boolean isEnabled() {
-        return enabled;
+        return mIsEnabled;
     }
 
     public boolean isClicked() {
-        return clicked;
+        return mIsClicked;
     }
 
     public void setClicked(boolean clicked) {
-        this.clicked = clicked;
+        this.mIsClicked = clicked;
     }
 
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        this.mIsEnabled = enabled;
     }
 
-    public Answers(String answer,boolean correct) {
-        this.answer = answer;
-        this.correct = correct;
+    public Answers(String answer,boolean isCorrect) {
+        this.mAnswer = answer;
+        this.mIsCorrect = isCorrect;
 
 
 
@@ -40,27 +40,27 @@ public class Answers {
 
 
     public boolean isCorrectChecked() {
-        return correctChecked;
+        return mIsCorrectChecked;
     }
 
     public void setCorrectChecked(boolean correctChecked) {
-        this.correctChecked = correctChecked;
+        this.mIsCorrectChecked = correctChecked;
     }
 
-    public int getChecked() {
-        return checked;
+    public int getIsChecked() {
+        return mIsChecked;
     }
 
-    public void setChecked(int checked) {
-        this.checked = checked;
+    public void setIsChecked(int isChecked) {
+        this.mIsChecked = isChecked;
     }
 
     public boolean isCorrect() {
-        return correct;
+        return mIsCorrect;
     }
 
     public String getAnswer() {
-        return answer;
+        return mAnswer;
     }
 
 }

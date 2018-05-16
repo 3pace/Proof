@@ -1,57 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-       <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="5"
-        android:id="@+id/etxt_login"
-        android:theme="@style/TitleText"
-        android:inputType="textCapCharacters|textMultiLine"
-        android:hint="@string/login_hint_example"
-        android:paddingLeft="@dimen/large_padding"
-        android:paddingRight="@dimen/large_padding"
-        android:paddingTop="@dimen/small_padding"
-        android:paddingBottom="@dimen/small_padding"/>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
     <EditText
+        android:id="@+id/etxt_name"
+        style="@style/EditTextTheme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="5"
-        android:id="@+id/etxt_password"
-        android:theme="@style/TitleText"
-        android:inputType="textPassword"
-        android:hint="@string/password_hint_example"
+        android:hint="@string/username"
+        android:inputType="textCapWords"
+        android:paddingBottom="@dimen/small_padding"
+        android:paddingLeft="@dimen/large_padding"
+        android:paddingRight="@dimen/large_padding"
+        android:paddingTop="@dimen/small_padding" />
+
+    <com.proof.ly.space.proof.CustomViews.PrefixEditText
+        android:id="@+id/etxt_login"
+        style="@style/EditTextTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/phone_hint"
+        android:inputType="phone"
+        android:maxLength="10"
+        android:paddingBottom="@dimen/small_padding"
         android:paddingLeft="@dimen/large_padding"
         android:paddingRight="@dimen/large_padding"
         android:paddingTop="@dimen/small_padding"
-        android:paddingBottom="@dimen/small_padding"/>
-    <!--ЗАМЕНИТЬ НА КНОПКИ!-->
-    <TextView
+        android:tag="+7 " />
+
+    <EditText
+        android:id="@+id/etxt_code"
+        style="@style/EditTextTheme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txt_next"
-        android:textSize="@dimen/normal_txt_size"
-        android:background="@color/white"
-        android:textColor="@color/black"
-        android:gravity="right"
-        android:text="@string/next_title"
+        android:hint="@string/phone_code_hint"
+        android:inputType="phone"
+        android:paddingBottom="@dimen/small_padding"
         android:paddingLeft="@dimen/large_padding"
         android:paddingRight="@dimen/large_padding"
-        android:paddingTop="@dimen/small_padding"
-        android:paddingBottom="@dimen/small_padding"/>
-    <TextView
+        android:paddingTop="@dimen/small_padding" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txt_register"
-        android:textSize="@dimen/normal_txt_size"
-        android:background="@color/white"
-        android:textColor="@color/black"
-        android:gravity="right"
-        android:text="@string/register_title"
-        android:paddingLeft="@dimen/large_padding"
-        android:paddingRight="@dimen/large_padding"
-        android:paddingTop="@dimen/small_padding"
-        android:paddingBottom="@dimen/small_padding"/>
+        android:gravity="end|center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_timer"
+            android:text="60"
+            android:theme="@style/TitleText"
+            android:visibility="invisible"
+            android:paddingRight="@dimen/normal_padding"
+            android:paddingLeft="@dimen/normal_padding"
+            android:paddingBottom="@dimen/small_padding"
+            android:paddingTop="@dimen/small_padding"
+            />
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginBottom="@dimen/small_padding"
+            android:layout_marginLeft="@dimen/normal_padding"
+            android:layout_marginRight="@dimen/normal_padding"
+            android:layout_marginTop="@dimen/small_padding"
+            android:text="@string/get_code"
+            android:textColor="@color/colorPrimaryDark"
+            android:theme="@style/ButtonMenu" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -39,7 +39,7 @@ public class AddQuestionFragment extends Fragment implements FragmentInterface {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        qManager = ((MainActivity)getActivity()).getqManager();
+        qManager = ((MainActivity)getActivity()).getmQuestionManager();
         qManager.initJson();
     }
 
@@ -92,7 +92,7 @@ public class AddQuestionFragment extends Fragment implements FragmentInterface {
     public void initSetters() {
         if (USManager.hasLogIn())
             txt_title.append(", " + ((MainActivity) getActivity())
-                    .getDbManager()
+                    .getmDBManager()
                     .getUserById(USManager.getUID())
                     .get("username"));
         fab.setAlpha(0.2f);

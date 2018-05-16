@@ -1,34 +1,29 @@
 package com.proof.ly.space.proof.Data;
 
-import android.util.Log;
-
 import java.util.ArrayList;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by aman on 16.03.18.
  */
 
 public class Question {
-    private int qId;
-    private String q;
-    private ArrayList<Answers> answers;
-    private int cCount = 0;
-    private boolean checked = false;
-    private boolean correctChecked = false;
-    private int cAnswers = 0;
-    private int notcAnswers = 0;
-    private int correctCount = 0;
-    private int leftCorrectCount = 0;
+    private int mQuestionId;
+    private String mQuestion;
+    private ArrayList<Answers> mArrayListAnswers;
+    private int mCorrectAnswersCount;
+    private boolean mIsChecked = false;
+    private boolean mIsCorrectChecked = false;
+    private int mCorrectCheckedAnswersCount = 0;
+    private int mNotCorrectCheckedAnswersCount = 0;
+    private int mLeftCorrectClickCount = 0;
     private boolean created = false;
-    private int notCorrect = 0;
+    private int mNotCorrectCheckedQuestionsCount = 0;
 
-    public Question(int qId,String q,ArrayList<Answers> answers,int cCount){
-        this.qId = qId;
-        this.q = q;
-        this.answers = answers;
-        this.cCount = cCount;
+    public Question(int mQuestionId, String mQuestion, ArrayList<Answers> mArrayListAnswers, int mCorrectAnswersCount){
+        this.mQuestionId = mQuestionId;
+        this.mQuestion = mQuestion;
+        this.mArrayListAnswers = mArrayListAnswers;
+        this.mCorrectAnswersCount = mCorrectAnswersCount;
 
 
     }
@@ -36,59 +31,59 @@ public class Question {
 
 
 
-    public int getqId() {
-        return qId;
+    public int getQuestionId() {
+        return mQuestionId;
     }
 
-    public String getQ() {
-        return q;
+    public String getQuestion() {
+        return mQuestion;
     }
 
-    public int getcCount() {
-        return cCount;
+    public int getCorrectAnswersCount() {
+        return mCorrectAnswersCount;
     }
     public void setChecked(boolean checked){
-        this.checked = checked;
+        this.mIsChecked = checked;
     }
 
-    public void setcAnswers(int cAnswers) {
-        this.cAnswers = cAnswers;
+    public void setCorrectCheckedAnswersCount(int correctCheckedAnswersCount) {
+        this.mCorrectCheckedAnswersCount = correctCheckedAnswersCount;
     }
 
-    public void setNotcAnswers(int notcAnswers) {
-        this.notcAnswers = notcAnswers;
+    public void setNotCorrectCheckedAnswersCount(int notCorrectCheckedAnswersCount) {
+        this.mNotCorrectCheckedAnswersCount = notCorrectCheckedAnswersCount;
     }
 
-    public int getNotcAnswers() {
-        return notcAnswers;
+    public int getNotCorrectCheckedAnswersCount() {
+        return mNotCorrectCheckedAnswersCount;
     }
 
-    public int getcAnswers() {
-        return cAnswers;
+    public int getCorrectCheckedAnswersCount() {
+        return mCorrectCheckedAnswersCount;
     }
 
     public boolean isChecked() {
-        return checked;
+        return mIsChecked;
     }
 
     public boolean isCorrectChecked() {
-        return correctChecked;
+        return mIsCorrectChecked;
     }
 
     public void setCorrectChecked(boolean correctChecked) {
-        this.correctChecked = correctChecked;
+        this.mIsCorrectChecked = correctChecked;
     }
 
-    public ArrayList<Answers> getAnswers() {
-        return answers;
+    public ArrayList<Answers> getArrayListAnswers() {
+        return mArrayListAnswers;
     }
 
-    public void setLeftCorrectCount(int leftCorrectCount) {
-        this.leftCorrectCount = leftCorrectCount;
+    public void setLeftCorrectClickCount(int leftCorrectClickCount) {
+        this.mLeftCorrectClickCount = leftCorrectClickCount;
     }
 
-    public int getLeftCorrectCount() {
-        return leftCorrectCount;
+    public int getLeftCorrectClickCount() {
+        return mLeftCorrectClickCount;
     }
 
     public void setCreated(boolean created) {
@@ -99,15 +94,13 @@ public class Question {
         return created;
     }
 
-    public int getCorrectCount() {
-        return correctCount;
+
+
+    public int getNotCorrectCheckedQuestionsCount() {
+        return mNotCorrectCheckedQuestionsCount;
     }
 
-    public int getNotCorrect() {
-        return notCorrect;
-    }
-
-    public void setNotCorrect(int notCorrect) {
-        this.notCorrect = notCorrect;
+    public void setNotCorrectCheckedQuestionsCount(int notCorrectCheckedQuestionsCount) {
+        this.mNotCorrectCheckedQuestionsCount = notCorrectCheckedQuestionsCount;
     }
 }

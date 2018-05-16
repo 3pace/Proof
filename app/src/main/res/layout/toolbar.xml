@@ -15,7 +15,9 @@
             android:id="@+id/txt_tbar"
             android:text="@string/app_name"
             android:textColor="?attr/text_color"
-            android:textSize="@dimen/large_txt_size"/>
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="@dimen/normal_txt_size"/>
 
     </android.support.v7.widget.Toolbar>
 </LinearLayout>

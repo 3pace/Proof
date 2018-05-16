@@ -111,9 +111,9 @@ public class QManager {
         int result = 0;
 
         for (Question question : questionsList) {
-            acount = question.getAnswers().size() > 5;//если больше 5, то значит 1 балл дает 2 балла
-            points = question.getcAnswers();
-            ccount = question.getcCount();
+            acount = question.getArrayListAnswers().size() > 5;//если больше 5, то значит 1 балл дает 2 балла
+            points = question.getCorrectCheckedAnswersCount();
+            ccount = question.getCorrectAnswersCount();
 
 
             switch (ccount) {
@@ -162,7 +162,7 @@ public class QManager {
                 if (!question.isChecked()) {
                     count++;
                 } else {
-                    notcorrect += question.getNotCorrect();
+                    notcorrect += question.getNotCorrectCheckedQuestionsCount();
                 }
             }
         map.put("notclicked", count);
@@ -176,14 +176,14 @@ public class QManager {
         for (Question question : questionsList) {
             if (!question.isChecked()) {
 
-                for (Answers answer : question.getAnswers()) {
+                for (Answers answer : question.getArrayListAnswers()) {
                     if (answer.isCorrect()) {
-                        answer.setChecked(1);
+                        answer.setIsChecked(1);
                         answer.setCorrectChecked(true);
                         answer.setEnabled(false);
                     }
-                    if (answer.getChecked() != 1) {
-                        answer.setChecked(2);
+                    if (answer.getIsChecked() != 1) {
+                        answer.setIsChecked(2);
                         answer.setEnabled(false);
                     }
 

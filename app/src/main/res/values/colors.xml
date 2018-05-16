@@ -13,12 +13,12 @@
 
 
     <color name="colorPrimary_Light">#2979FF</color>
-    <color name="colorPrimaryDark_Light">#2979FF</color>
+    <color name="colorPrimaryDark_Light">#06080b</color>
 
-    <color name="colorPrimary_Dark">#02060e</color>
-    <color name="colorPrimaryDark_Dark">#020710</color>
-    <color name="darkButton">#0a101b</color>
-    <color name="darkBlue">#0e2651</color>
-    <color name="darkBackground">#050910</color>
+    <color name="colorPrimary_Dark">#06080b</color>
+    <color name="colorPrimaryDark_Dark">#06080b</color>
+    <color name="darkButton">#0c1016</color>
+    <color name="darkBlue">#232f43</color>
+    <color name="darkBackground">#05070a</color>
 
 </resources>

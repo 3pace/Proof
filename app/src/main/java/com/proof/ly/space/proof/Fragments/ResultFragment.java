@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.proof.ly.space.proof.Fragments.windows.MTestingFragment;
 import com.proof.ly.space.proof.Interfaces.FragmentInterface;
 import com.proof.ly.space.proof.MainActivity;
 import com.proof.ly.space.proof.R;
@@ -97,8 +96,8 @@ public class ResultFragment extends Fragment implements FragmentInterface {
         txt_finish_title.animate().alpha(1).setDuration(600).start();
         txt_result.animate().alpha(1).setDuration(600).start();
 
-        HashMap<String, Integer> rmap = ((MainActivity) getActivity()).getqManager().getNotClickedAnswers();
-        int points = ((MainActivity) getActivity()).getqManager().getResult();
+        HashMap<String, Integer> rmap = ((MainActivity) getActivity()).getmQuestionManager().getNotClickedAnswers();
+        int points = ((MainActivity) getActivity()).getmQuestionManager().getResult();
         int nchecked = rmap.get("notclicked");
         int ncorrects = rmap.get("notcorrect");
 
@@ -116,13 +115,14 @@ public class ResultFragment extends Fragment implements FragmentInterface {
                 .append(getWord(ncorrects,"ошибок","ошибку","ошибки"));
         if (nchecked != 0)
             text
+                    .append(" ")
                     .append(getResources().getString(R.string.ne_otevili))
                     .append(" ")
                     .append(nchecked)
                     .append(" ")
                     .append(getWord(nchecked,"вопросов","вопрос","вопроса"));
 
-        txt_result.setText(text.toString().toUpperCase());
+        txt_result.setText(text.toString());
 
     }
 

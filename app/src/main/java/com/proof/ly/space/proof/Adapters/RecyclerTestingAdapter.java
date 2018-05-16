@@ -1,15 +1,17 @@
 package com.proof.ly.space.proof.Adapters;
 
-import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.proof.ly.space.proof.Data.Answers;
 import com.proof.ly.space.proof.Helpers.SettingsManager;
 import com.proof.ly.space.proof.Interfaces.OnItemClick;
@@ -24,16 +26,20 @@ import java.util.ArrayList;
 
 public class RecyclerTestingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<Answers> arrayList;
-    private Typeface typeface;
-    private OnItemClick onItemClick;
+    private ArrayList<Answers> mArrayList;
+    private Typeface mTypeface;
+    private OnItemClick mOnItemClick;
     private final int QUESTION = 0, ANSWER = 1;
-    private String question;
-    private int disabledColor,clickedColor;
+    private final int ADS = 2;
+    private int mAdsPos = 0;
+    private String mQuestion;
+    private int mDisabledColor, mClickedColor;
+    private boolean mAdsShow;
 
     public RecyclerTestingAdapter(ArrayList<Answers> arrayList) {
-        this.arrayList = arrayList;
-
+        this.mArrayList = arrayList;
+        mAdsPos = (int) (Math.random() * (arrayList.size())) + 1;
+        mAdsShow = ((int) (Math.random() * 5)) == 1;
 
 
     }
@@ -45,7 +51,10 @@ public class RecyclerTestingAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 return new QuestionHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.question_container, parent, false));
             case ANSWER:
                 return new ItemHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.answer_container, parent, false));
+            case ADS:
+                return new AdsHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.ads_container, parent, false));
         }
+
         return new ItemHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.answer_container, parent, false));
 
     }
@@ -55,45 +64,47 @@ public class RecyclerTestingAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ItemHolder) {
             ItemHolder itemHolder = (ItemHolder) holder;
-            Answers answers = arrayList.get(position - 1);
-            itemHolder.txt_answer.setText(answers.getAnswer());
-            itemHolder.txt_answer.setEnabled(answers.isEnabled());
-            switch (answers.getChecked()) {
+            int pos = mAdsShow && position > mAdsPos ? position - 2 : position - 1;
+            Log.d("test", pos + " : " + position + " * " + mArrayList.size());
+            Answers answers = mArrayList.get(pos);
+            itemHolder.mTextViewAnswer.setText(answers.getAnswer());
+            itemHolder.mTextViewAnswer.setEnabled(answers.isEnabled());
+            switch (answers.getIsChecked()) {
                 case 1:
                     if (SettingsManager.colored) {
                         if (answers.isCorrectChecked())
-                            itemHolder.txt_answer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorPrimary));
+                            itemHolder.mTextViewAnswer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorPrimary));
                         else
-                            itemHolder.txt_answer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorAccent));
+                            itemHolder.mTextViewAnswer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorAccent));
                     } else {
                         if (answers.isClicked())
-                            itemHolder.txt_answer.setTextColor(clickedColor);
+                            itemHolder.mTextViewAnswer.setTextColor(mClickedColor);
                         else
-                            itemHolder.txt_answer.setTextColor(disabledColor);
+                            itemHolder.mTextViewAnswer.setTextColor(mDisabledColor);
                     }
                     break;
                 case 2:
 
-                    itemHolder.txt_answer.setTextColor(disabledColor);
+                    itemHolder.mTextViewAnswer.setTextColor(mDisabledColor);
                     break;
                 case 3:
                     if (SettingsManager.colored) {
                         if (answers.isCorrectChecked())
-                            itemHolder.txt_answer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorPrimary));
+                            itemHolder.mTextViewAnswer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorPrimary));
                         else
-                            itemHolder.txt_answer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorAccent));
+                            itemHolder.mTextViewAnswer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorAccent));
                     } else {
-                        itemHolder.txt_answer.setTextColor(disabledColor);
+                        itemHolder.mTextViewAnswer.setTextColor(mDisabledColor);
                     }
                     break;
                 case 4:
                     if (SettingsManager.colored) {
                         if (answers.isCorrectChecked())
-                            itemHolder.txt_answer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorPrimary));
+                            itemHolder.mTextViewAnswer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorPrimary));
                         else
-                            itemHolder.txt_answer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorAccent));
+                            itemHolder.mTextViewAnswer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorAccent));
                     } else {
-                        itemHolder.txt_answer.setTextColor(clickedColor);
+                        itemHolder.mTextViewAnswer.setTextColor(mClickedColor);
                     }
 
                     break;
@@ -102,66 +113,95 @@ public class RecyclerTestingAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         if (holder instanceof QuestionHolder) {
             QuestionHolder q = (QuestionHolder) holder;
-            q.txt_q.setText(question);
+            q.mTextViewQuestion.setText(mQuestion);
         }
 
     }
 
     @Override
     public int getItemCount() {
-        return arrayList.size() + 1;
+        return mAdsShow ? mArrayList.size() + 2 : mArrayList.size() + 1;
     }
 
     private class QuestionHolder extends RecyclerView.ViewHolder {
-        private TextView txt_q;
+        private TextView mTextViewQuestion;
 
         QuestionHolder(View itemView) {
             super(itemView);
-            txt_q = itemView.findViewById(R.id.txt_question);
-            txt_q.setTypeface(typeface);
+            mTextViewQuestion = itemView.findViewById(R.id.txt_question);
+            mTextViewQuestion.setTypeface(mTypeface);
         }
     }
 
     public class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView txt_answer;
+        private TextView mTextViewAnswer;
 
         ItemHolder(View itemView) {
             super(itemView);
-            txt_answer = itemView.findViewById(R.id.txt_answer);
-            txt_answer.setOnClickListener(this);
-            ClickEffect.setViewFast(txt_answer);
-            txt_answer.setTypeface(typeface);
+            mTextViewAnswer = itemView.findViewById(R.id.txt_answer);
+            mTextViewAnswer.setOnClickListener(this);
+            ClickEffect.setViewFast(mTextViewAnswer);
+            mTextViewAnswer.setTypeface(mTypeface);
         }
 
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.txt_answer:
-                    onItemClick.onClick(getAdapterPosition() - 1);
+                    int pos = mAdsShow && getAdapterPosition() > mAdsPos ? getAdapterPosition() - 2 : getAdapterPosition() - 1;
+                    mOnItemClick.onClick(pos);
                     break;
             }
         }
     }
 
+    class AdsHolder extends RecyclerView.ViewHolder {
+        private AdView mAdView;
+
+        public AdsHolder(View itemView) {
+            super(itemView);
+            mAdView = itemView.findViewById(R.id.banner_AdView);
+            mAdView.setVisibility(View.GONE);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+                    mAdView.setVisibility(View.VISIBLE);
+                }
+
+
+            });
+            mAdView.loadAd(adRequest);
+
+        }
+    }
+
     @Override
     public int getItemViewType(int position) {
-        return (position == QUESTION) ? QUESTION : ANSWER;
+
+        if (position == mAdsPos && mAdsShow)
+            return ADS;
+        else
+            return (position == QUESTION) ? QUESTION : ANSWER;
     }
 
     public void setTypeface(Typeface typeface) {
-        this.typeface = typeface;
+        this.mTypeface = typeface;
     }
 
     public void setOnItemClick(OnItemClick onItemClick) {
-        this.onItemClick = onItemClick;
+        this.mOnItemClick = onItemClick;
     }
 
     public void setQuestion(String question) {
-        this.question = question;
+        this.mQuestion = question;
     }
 
-    public void setDisabledColor(int disabledColor,int clickedColor) {
-        this.disabledColor = disabledColor;
-        this.clickedColor = clickedColor;
+    public void setDisabledColor(int disabledColor, int clickedColor) {
+        this.mDisabledColor = disabledColor;
+        this.mClickedColor = clickedColor;
     }
+
+
 }

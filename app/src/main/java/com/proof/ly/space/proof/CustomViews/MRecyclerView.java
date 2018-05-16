@@ -4,14 +4,15 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+
 /**
  * Created by aman on 4/24/18.
  */
 
-public class MRecyclerView  extends RecyclerView {
+public class MRecyclerView extends RecyclerView {
 
-    private View emptyView;
-    private boolean first = false;
+    private View mEmptyView;
+    private boolean mIsFirst = false;
 
     final private AdapterDataObserver observer = new AdapterDataObserver() {
         @Override
@@ -39,17 +40,17 @@ public class MRecyclerView  extends RecyclerView {
     }
 
     public MRecyclerView(Context context, AttributeSet attrs,
-                             int defStyle) {
+                         int defStyle) {
         super(context, attrs, defStyle);
     }
 
     void checkIfEmpty() {
-        if (emptyView != null && getAdapter() != null) {
+        if (mEmptyView != null && getAdapter() != null) {
             final boolean emptyViewVisible =
                     getAdapter().getItemCount() == 0;
-            if (first)  emptyView.setAlpha(0);
-            emptyView.animate().alpha(1).setDuration(500).start();
-            emptyView.setVisibility(emptyViewVisible ? VISIBLE : GONE);
+            if (mIsFirst) mEmptyView.setAlpha(0);
+            mEmptyView.animate().alpha(1).setDuration(500).start();
+            mEmptyView.setVisibility(emptyViewVisible ? VISIBLE : GONE);
 
             setVisibility(emptyViewVisible ? INVISIBLE : VISIBLE);
         }
@@ -70,10 +71,10 @@ public class MRecyclerView  extends RecyclerView {
     }
 
     public void setEmptyView(View emptyView) {
-        this.emptyView = emptyView;
-        this.emptyView.setAlpha(1);
-        this.emptyView.setVisibility(GONE);
+        this.mEmptyView = emptyView;
+        this.mEmptyView.setAlpha(1);
+        this.mEmptyView.setVisibility(GONE);
         checkIfEmpty();
-        first = true;
+        mIsFirst = true;
     }
 }

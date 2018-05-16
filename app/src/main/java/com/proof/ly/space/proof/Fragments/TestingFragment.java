@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +38,8 @@ public class TestingFragment extends Fragment implements FragmentInterface {
     private int checkedCount = 0;
     private int cCount = 0;
     private int cAnswers = 0;
-    private int notcAnswers = 0;
-    private int notCorrectCheckedCount = 0;
+    private int mNotCorrectCheckedQuestionsCount = 0;
+    private int mNotCorrectCheckedAnswersCount = 0;
     private int disabledColor,clickedColor;
 
 
@@ -49,6 +48,7 @@ public class TestingFragment extends Fragment implements FragmentInterface {
         bundle.putInt("pos", position);
         TestingFragment tabFragment = new TestingFragment();
         tabFragment.setArguments(bundle);
+
 
         return tabFragment;
     }
@@ -59,11 +59,11 @@ public class TestingFragment extends Fragment implements FragmentInterface {
         super.onCreate(savedInstanceState);
         position = getArguments().getInt("pos");
 
-        questions = ((MainActivity) getActivity()).getqManager().getQ();
-        cCount = questions.get(position).getcCount();
-        questions.get(position).setLeftCorrectCount(cCount);
-        correctCount = questions.get(position).getLeftCorrectCount();
-        notCorrectCheckedCount = questions.get(position).getNotCorrect();
+        questions = ((MainActivity) getActivity()).getmQuestionManager().getQ();
+        cCount = questions.get(position).getCorrectAnswersCount();
+        questions.get(position).setLeftCorrectClickCount(cCount);
+        correctCount = questions.get(position).getLeftCorrectClickCount();
+        mNotCorrectCheckedAnswersCount = questions.get(position).getNotCorrectCheckedQuestionsCount();
 
         disabledColor = ((MainActivity)getActivity()).getDisabledColor();
         clickedColor = ((MainActivity)getActivity()).getClickedColor();
@@ -111,7 +111,7 @@ public class TestingFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initObjects() {
-        radapter = new RecyclerTestingAdapter(questions.get(position).getAnswers());
+        radapter = new RecyclerTestingAdapter(questions.get(position).getArrayListAnswers());
         radapter.setDisabledColor(disabledColor, clickedColor);
 
 
@@ -121,10 +121,11 @@ public class TestingFragment extends Fragment implements FragmentInterface {
     public void initSetters() {
         StringBuilder text = new StringBuilder(String.valueOf((position + 1)));
         text = cCount > 1 ?
-                text.append(". ").append(questions.get(position).getQ()).append(" (").append(cCount).append(" отв.)"):
-                text.append(". ").append(questions.get(position).getQ());
+                text.append(". ").append(questions.get(position).getQuestion()).append(" (").append(cCount).append(" отв.)"):
+                text.append(". ").append(questions.get(position).getQuestion());
 
-        radapter.setQuestion(text.toString().toUpperCase());
+        radapter.setQuestion(text.toString());
+
 
         rview.setLayoutManager(new LinearLayoutManager(getContext()));
         rview.setAdapter(radapter);
@@ -133,9 +134,9 @@ public class TestingFragment extends Fragment implements FragmentInterface {
             @Override
             public void onClick(int pos) {
                 int answersSize;
-                correctCount = questions.get(position).getLeftCorrectCount();
+                correctCount = questions.get(position).getLeftCorrectClickCount();
                 log("before: " + correctCount);
-                answers = questions.get(position).getAnswers();
+                answers = questions.get(position).getArrayListAnswers();
                 answersSize = answers.size();
 
                 for (int i = 0; i < answersSize; i++) {
@@ -146,42 +147,50 @@ public class TestingFragment extends Fragment implements FragmentInterface {
                 answers.get(pos).setEnabled(false);
                 answers.get(pos).setClicked(true);
                 if (answers.get(pos).isCorrect()) {
-                    answers.get(pos).setChecked(1);
+                    answers.get(pos).setIsChecked(1);
                     answers.get(pos).setCorrectChecked(true);
                     cAnswers++;
                 } else {
 
-                    notCorrectCheckedCount++;//количсетво неправильно отвеченных ответов
-                    questions.get(position).setNotCorrect(notCorrectCheckedCount);
-                    if (cCount >= 2) //если количесво правильных ответов в вопросе больше 2
-                        if (notCorrectCheckedCount == 2) {
+                    mNotCorrectCheckedAnswersCount++;//количсетво неправильно отвеченных ответов
+
+
+                    if (cCount >= 2) { //если количесво правильных ответов в вопросе больше 2
+                        if (mNotCorrectCheckedAnswersCount == 2) {
                             //и проверяем если мы уже совершили 2 ошибки, то можно останавливать.
                             // Т.к. если в вопросе 3 или 2 прав. ответа, то при 2 ошибках считается что неправильно ответили на вопрос
-                            log("" + notCorrectCheckedCount);
+                            log("" + mNotCorrectCheckedAnswersCount);
                             answers.get(pos).setCorrectChecked(false);
-                            notcAnswers++;
+                            mNotCorrectCheckedQuestionsCount++;
+                            questions.get(position).setNotCorrectCheckedQuestionsCount(mNotCorrectCheckedQuestionsCount);
                             if (SettingsManager.colored)
                                 correctCount = 0; //если вклчн. быстрый показ прв. отв. то при ошибке сразу останвлиаем
                         }
+                    } else {
+                        //если ответов меньше чем 2, значит в вопросе один ответ, и следовательно, вопрос счиатется неправильно отвеченным
+                        questions.get(position).setNotCorrectCheckedQuestionsCount(mNotCorrectCheckedAnswersCount);
+                    }
+                    answers.get(pos).setIsChecked(1);
 
-                    answers.get(pos).setChecked(1);
+                    questions.get(position).setNotCorrectCheckedAnswersCount(mNotCorrectCheckedAnswersCount);
 
 
                 }
-                for (int i = 0; i < answersSize; i++) {
-                    if (answers.get(i).getChecked() != 1) {
-                        answers.get(i).setChecked(2); //делаем не выбранные варианты серого цвета
+
+               /* for (int i = 0; i < answersSize; i++) {
+                    if (answers.get(i).getIsChecked() != 1) {
+                        answers.get(i).setIsChecked(2); //делаем не выбранные варианты серого цвета
 
                     }
-                }
+                }*/
 
 
                 if (correctCount == 0)
                     for (int j = 0; j < answersSize; j++) {
-                        if (answers.get(j).getChecked() != 1) {
-                            answers.get(j).setChecked(2);
+                        if (answers.get(j).getIsChecked() != 1) {
+                            answers.get(j).setIsChecked(2);
                             if (answers.get(j).isCorrect()) {
-                                answers.get(j).setChecked(1);
+                                answers.get(j).setIsChecked(1);
                                 answers.get(j).setClicked(false);
                                 answers.get(j).setCorrectChecked(true);
                             }
@@ -189,10 +198,10 @@ public class TestingFragment extends Fragment implements FragmentInterface {
                     }
 
 
-                questions.get(position).setLeftCorrectCount(correctCount);
-                log("after: " + questions.get(position).getLeftCorrectCount() + "");
-                questions.get(position).setcAnswers(cAnswers);
-                questions.get(position).setNotcAnswers(notcAnswers);
+                questions.get(position).setLeftCorrectClickCount(correctCount);
+                log("after: " + questions.get(position).getLeftCorrectClickCount() + "");
+                questions.get(position).setCorrectCheckedAnswersCount(cAnswers);
+
                 if (correctCount <= 0) {
                     for (int i = 0; i < answersSize; i++) {
                         answers.get(i).setEnabled(false);
@@ -212,7 +221,7 @@ public class TestingFragment extends Fragment implements FragmentInterface {
 
                 log("checked c: " + checkedCount + ", size: " + questions.size());
                 if (checkedCount >= questionsSize) {
-                    ((MainActivity) getActivity()).getqManager().stopTesting();
+                    ((MainActivity) getActivity()).getmQuestionManager().stopTesting();
                     MTestingFragment.finishTesting(questions.size());
 
                 }
@@ -228,8 +237,8 @@ public class TestingFragment extends Fragment implements FragmentInterface {
 
     private void addViewedQuestion() {
         if (SettingsManager.cycleMode) {
-            int qId = questions.get(position).getqId();
-            ((MainActivity) getActivity()).getDbManager().addViewedQuestion(qId); //добавялем id вопроса в список просмотренных
+            int qId = questions.get(position).getQuestionId();
+            ((MainActivity) getActivity()).getmDBManager().addViewedQuestion(qId); //добавялем id вопроса в список просмотренных
             Log.d("test", "question added id: " + qId);
         } else {
             Log.d("test", "cycle mode disabled");

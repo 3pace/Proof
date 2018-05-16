@@ -5,18 +5,18 @@ package com.proof.ly.space.proof.Data;
  */
 
 public class Lesson {
-    private String name,db;
+    private String mName, mDb;
 
     public Lesson(String name, String db) {
-        this.name = name;
-        this.db = db;
+        this.mName = name;
+        this.mDb = db;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public String getDb() {
-        return db;
+        return mDb;
     }
 }

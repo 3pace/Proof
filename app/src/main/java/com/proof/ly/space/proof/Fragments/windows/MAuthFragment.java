@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -17,10 +18,16 @@ import com.proof.ly.space.proof.R;
  */
 
 public class MAuthFragment extends Fragment implements FragmentInterface {
-    private static MViewPager vpager;
-    private AAVPAdapter adapter;
+    private static MViewPager mViewPager;
+    private AAVPAdapter mAdapter;
     public MAuthFragment() {
 
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -39,7 +46,7 @@ public class MAuthFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initViews(View itemView) {
-        vpager = itemView.findViewById(R.id.vpager);
+        mViewPager = itemView.findViewById(R.id.vpager);
     }
 
     @Override
@@ -54,16 +61,20 @@ public class MAuthFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initObjects() {
-        adapter = new AAVPAdapter(getChildFragmentManager());
+        mAdapter = new AAVPAdapter(getChildFragmentManager());
     }
 
     @Override
     public void initSetters() {
-        vpager.setAdapter(adapter);
-        vpager.setAllowedSwipeDirection(MViewPager.SwipeDirection.none);
+        mViewPager.setAdapter(mAdapter);
+        mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.none);
     }
 
     public static void toRegisterPage(){
-        vpager.setCurrentItem(2);
+        mViewPager.setCurrentItem(2);
+    }
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
     }
 }

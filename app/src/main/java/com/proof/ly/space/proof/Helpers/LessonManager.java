@@ -28,6 +28,7 @@ public class LessonManager {
 
     }
     public void update(DBManager dbManager){
+        lessons.clear();
         SQLiteDatabase database = dbManager.getHelper().getReadableDatabase();
         Cursor c = database.query(DBHelper.MENU_LESSONS,null,null,null,null,null,null);
         if (c.moveToFirst())
@@ -57,11 +58,14 @@ public class LessonManager {
         return DEF_NOT;
 
     }
+    public int getCount(){
+        return lessons.size();
+    }
     public String setCurrentLesson(String currentLesson,String currendDb){
         CURRENT_LESSON = currentLesson;
         CURRENT_DB = currendDb;
         String lesson;
         lesson = CURRENT_LESSON;
-        return lesson;
+        return lesson.trim();
     }
 }

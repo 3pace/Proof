@@ -1,5 +1,6 @@
 package com.proof.ly.space.proof.Fragments;
 
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+
 import com.melnykov.fab.FloatingActionButton;
 import com.proof.ly.space.proof.Adapters.RecyclerMenuAdapter;
 import com.proof.ly.space.proof.CustomViews.MRecyclerView;
@@ -64,6 +67,7 @@ public class MyQuestionFragment extends Fragment implements FragmentInterface {
         fab = itemView.findViewById(R.id.fab);
         rview = itemView.findViewById(R.id.rview);
         mEmptyView = itemView.findViewById(R.id.img_empty);
+        ((ImageView) mEmptyView.findViewById(R.id.img_empty)).setColorFilter(((MainActivity)getActivity()).getDisabledColor(), PorterDuff.Mode.SRC_ATOP);
     }
 
     @Override
@@ -94,7 +98,7 @@ public class MyQuestionFragment extends Fragment implements FragmentInterface {
     @Override
     public void initObjects() {
         adapter = new RecyclerMenuAdapter(arrayList);
-        dbManager = ((MainActivity)getActivity()).getDbManager();
+        dbManager = ((MainActivity)getActivity()).getmDBManager();
     }
 
     @Override

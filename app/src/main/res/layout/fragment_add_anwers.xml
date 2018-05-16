@@ -26,7 +26,7 @@
         android:maxLines="5"
         android:id="@+id/etxt_answer"
         style="@style/EditTextTheme"
-        android:inputType="textCapCharacters|textMultiLine"
+        android:inputType="textCapSentences|textMultiLine"
         android:hint="@string/answer_hint"
         android:paddingLeft="@dimen/large_padding"
         android:paddingRight="@dimen/large_padding"
