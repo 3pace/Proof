@@ -26,11 +26,11 @@ import com.proof.ly.space.proof.R;
 
 public class AddQuestionFragment extends Fragment implements FragmentInterface {
 
-    private TextView txt_title;
-    private FloatingActionButton fab;
-    private EditText etxt_question;
-    private boolean enabledNext = true;
-    private QManager qManager;
+    private TextView mTextViewTitle;
+    private FloatingActionButton mFloatingActionButton;
+    private EditText mEditTextQuestion;
+    private boolean mIsNextEnabled = true;
+    private QManager mQManager;
 
     public static Fragment getInstance() {
         return new AddQuestionFragment();
@@ -39,8 +39,8 @@ public class AddQuestionFragment extends Fragment implements FragmentInterface {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        qManager = ((MainActivity)getActivity()).getmQuestionManager();
-        qManager.initJson();
+        mQManager = ((MainActivity)getActivity()).getmQuestionManager();
+        mQManager.initJson();
     }
 
     @Override
@@ -60,22 +60,22 @@ public class AddQuestionFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initViews(View itemView) {
-        txt_title = itemView.findViewById(R.id.txt_add_question_title);
-        etxt_question = itemView.findViewById(R.id.etxt_question);
-        fab = itemView.findViewById(R.id.fab);
+        mTextViewTitle = itemView.findViewById(R.id.txt_add_question_title);
+        mEditTextQuestion = itemView.findViewById(R.id.etxt_question);
+        mFloatingActionButton = itemView.findViewById(R.id.fab);
     }
 
     @Override
     public void initTypeface() {
         Typeface typeface = ((MainActivity) getActivity()).getTypeface();
-        txt_title.setTypeface(typeface);
-        etxt_question.setTypeface(typeface);
+        mTextViewTitle.setTypeface(typeface);
+        mEditTextQuestion.setTypeface(typeface);
 
     }
 
     @Override
     public void initOnClick() {
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 confrim();
@@ -91,15 +91,15 @@ public class AddQuestionFragment extends Fragment implements FragmentInterface {
     @Override
     public void initSetters() {
         if (USManager.hasLogIn())
-            txt_title.append(", " + ((MainActivity) getActivity())
+            mTextViewTitle.append(", " + ((MainActivity) getActivity())
                     .getmDBManager()
                     .getUserById(USManager.getUID())
                     .get("username"));
-        fab.setAlpha(0.2f);
+        mFloatingActionButton.setAlpha(0.2f);
         setDisabledNext();
 
 
-        etxt_question.addTextChangedListener(new TextWatcher() {
+        mEditTextQuestion.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -122,30 +122,30 @@ public class AddQuestionFragment extends Fragment implements FragmentInterface {
     }
 
     private void setEnabledNext() {
-        if (!enabledNext) {
-            enabledNext = true;
-            fab.setEnabled(true);
-            fab.animate().alpha(1f).setDuration(300).start();
-            fab.setClickable(true);
-            fab.show();
+        if (!mIsNextEnabled) {
+            mIsNextEnabled = true;
+            mFloatingActionButton.setEnabled(true);
+            mFloatingActionButton.animate().alpha(1f).setDuration(300).start();
+            mFloatingActionButton.setClickable(true);
+            mFloatingActionButton.show();
         }
     }
 
     private void setDisabledNext() {
-        if (enabledNext) {
-            enabledNext = false;
-            fab.setClickable(false);
-            fab.hide();
+        if (mIsNextEnabled) {
+            mIsNextEnabled = false;
+            mFloatingActionButton.setClickable(false);
+            mFloatingActionButton.hide();
         }
     }
 
 
     private void confrim() {
-        String text = etxt_question.getText().toString().trim();
+        String text = mEditTextQuestion.getText().toString().trim();
         if (text.length() > 0) {
-            etxt_question.setEnabled(false);
-            etxt_question.setTextColor(getResources().getColor(R.color.grey));
-            qManager.createJsonQuestion(text);
+            mEditTextQuestion.setEnabled(false);
+            mEditTextQuestion.setTextColor(getResources().getColor(R.color.grey));
+            mQManager.createJsonQuestion(text);
             MQuestionManagerFragment.nextPage();
             setDisabledNext();
         }

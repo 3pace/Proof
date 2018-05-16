@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -41,16 +40,16 @@ import static com.google.android.gms.common.util.WorkSourceUtil.TAG;
 
 public class LoginFragment extends Fragment implements FragmentInterface {
 
-    private Button btn;
-    private TextView txt_timer;
-    private EditText etxt_name, etxt_phone, etxt_code;
+    private Button mButton;
+    private TextView mTextViewTimer;
+    private EditText mEditTextName, mEditTextPhone, mEditTextCode;
     private FirebaseAuth mAuth;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-    private int btnType = 0;
+    private int mButtonType = 0;
     private PhoneAuthProvider mProvider;
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
-    private CountDownTimer timer;
+    private CountDownTimer mDownTimer;
     private String mName;
     private String mPhone;
     private static final int SECONDS_REM = 60;
@@ -86,23 +85,23 @@ public class LoginFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initViews(View itemView) {
-        etxt_name = itemView.findViewById(R.id.etxt_name);
-        etxt_phone = itemView.findViewById(R.id.etxt_login);
-        etxt_code = itemView.findViewById(R.id.etxt_code);
-        txt_timer = itemView.findViewById(R.id.txt_timer);
-        btn = itemView.findViewById(R.id.btn_next);
-        txt_timer.setTextColor(((MainActivity) getActivity()).getDisabledColor());
+        mEditTextName = itemView.findViewById(R.id.etxt_name);
+        mEditTextPhone = itemView.findViewById(R.id.etxt_login);
+        mEditTextCode = itemView.findViewById(R.id.etxt_code);
+        mTextViewTimer = itemView.findViewById(R.id.txt_timer);
+        mButton = itemView.findViewById(R.id.btn_next);
+        mTextViewTimer.setTextColor(((MainActivity) getActivity()).getDisabledColor());
 
     }
 
     @Override
     public void initTypeface() {
         Typeface typeface = ((MainActivity) getActivity()).getTypeface();
-        etxt_name.setTypeface(typeface);
-        etxt_phone.setTypeface(typeface);
-        etxt_code.setTypeface(typeface);
-        txt_timer.setTypeface(typeface);
-        btn.setTypeface(typeface);
+        mEditTextName.setTypeface(typeface);
+        mEditTextPhone.setTypeface(typeface);
+        mEditTextCode.setTypeface(typeface);
+        mTextViewTimer.setTypeface(typeface);
+        mButton.setTypeface(typeface);
 
     }
 
@@ -110,12 +109,12 @@ public class LoginFragment extends Fragment implements FragmentInterface {
     public void initOnClick() {
 
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mName = etxt_name.getText().toString().trim();
-                mPhone = etxt_phone.getText().toString().trim();
-                switch (btnType) {
+                mName = mEditTextName.getText().toString().trim();
+                mPhone = mEditTextPhone.getText().toString().trim();
+                switch (mButtonType) {
                     case 0:
                         if (!TextUtils.isEmpty(mName) && !TextUtils.isEmpty(mPhone)) {
                             mProvider.verifyPhoneNumber(
@@ -125,8 +124,8 @@ public class LoginFragment extends Fragment implements FragmentInterface {
                                     getActivity(),
                                     mCallbacks
                             );
-                            etxt_name.setEnabled(false);
-                            btn.setEnabled(false);
+                            mEditTextName.setEnabled(false);
+                            mButton.setEnabled(false);
                         } else {
                             Toast.makeText(getContext(), "Заполните все поля!", Toast.LENGTH_SHORT).show();
                         }
@@ -134,10 +133,10 @@ public class LoginFragment extends Fragment implements FragmentInterface {
                         break;
                     case 1:
 
-                        if (!TextUtils.isEmpty(etxt_code.getText())) {
-                            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, etxt_code.getText().toString().trim());
+                        if (!TextUtils.isEmpty(mEditTextCode.getText())) {
+                            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, mEditTextCode.getText().toString().trim());
                             signInWithPhoneAuthCredential(credential);
-                            btn.setEnabled(false);
+                            mButton.setEnabled(false);
                         }
 
                         break;
@@ -160,7 +159,7 @@ public class LoginFragment extends Fragment implements FragmentInterface {
 
             @Override
             public void onVerificationFailed(FirebaseException e) {
-                btn.setEnabled(true);
+                mButton.setEnabled(true);
                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
 
@@ -171,24 +170,24 @@ public class LoginFragment extends Fragment implements FragmentInterface {
                 Log.d(TAG, "onCodeSent:" + verificationId);
                 mVerificationId = verificationId;
                 mResendToken = token;
-                etxt_code.animate().alpha(1).setDuration(200).start();
-                etxt_code.setEnabled(true);
-                btn.setEnabled(true);
-                btn.setText(getResources().getString(R.string.send_code));
-                btnType = 1;
+                mEditTextCode.animate().alpha(1).setDuration(200).start();
+                mEditTextCode.setEnabled(true);
+                mButton.setEnabled(true);
+                mButton.setText(getResources().getString(R.string.send_code));
+                mButtonType = 1;
 
-                txt_timer.setVisibility(View.VISIBLE);
+                mTextViewTimer.setVisibility(View.VISIBLE);
 
-                timer = new CountDownTimer(SECONDS_REM * 1000, 1000) {
+                mDownTimer = new CountDownTimer(SECONDS_REM * 1000, 1000) {
 
                     public void onTick(long millisUntilFinished) {
-                        txt_timer.setText(":".concat(String.valueOf(millisUntilFinished / 1000)));
+                        mTextViewTimer.setText(":".concat(String.valueOf(millisUntilFinished / 1000)));
                     }
 
                     public void onFinish() {
-                        txt_timer.setVisibility(View.INVISIBLE);
-                        btnType = 0;
-                        btn.setText(getResources().getString(R.string.get_code));
+                        mTextViewTimer.setVisibility(View.INVISIBLE);
+                        mButtonType = 0;
+                        mButton.setText(getResources().getString(R.string.get_code));
                     }
                 }.start();
 
@@ -198,8 +197,8 @@ public class LoginFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initSetters() {
-        etxt_code.setEnabled(false);
-        etxt_code.setAlpha(0);
+        mEditTextCode.setEnabled(false);
+        mEditTextCode.setAlpha(0);
     }
 
 
@@ -224,16 +223,16 @@ public class LoginFragment extends Fragment implements FragmentInterface {
 
                             getActivity().startActivity(new Intent(getActivity(), MainActivity.class));
                             getActivity().finish();
-                            btn.setEnabled(true);
+                            mButton.setEnabled(true);
 
 
 
                         } else {
                             Toast.makeText(getContext(), task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            btn.setEnabled(true);
+                            mButton.setEnabled(true);
                         }
-                        timer.cancel();
+                        mDownTimer.cancel();
                     }
                 });
     }

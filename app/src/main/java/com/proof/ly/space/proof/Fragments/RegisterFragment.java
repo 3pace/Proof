@@ -4,20 +4,16 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.proof.ly.space.proof.Fragments.windows.TMenuFragment;
 import com.proof.ly.space.proof.Interfaces.FragmentInterface;
 import com.proof.ly.space.proof.MainActivity;
 import com.proof.ly.space.proof.R;
-import com.proof.ly.space.proof.Utils.ClickEffect;
 
 /**
  * Created by aman on 29.03.18.
@@ -25,8 +21,8 @@ import com.proof.ly.space.proof.Utils.ClickEffect;
 
 public class RegisterFragment extends Fragment implements FragmentInterface {
 
-    private TextView txt;
-    private Button btn;
+    private TextView mTextView;
+    private Button mButton;
 
     public static Fragment getInstance(){
         return new RegisterFragment();
@@ -50,21 +46,21 @@ public class RegisterFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initViews(View itemView) {
-        txt = itemView.findViewById(R.id.txt_info);
-        btn = itemView.findViewById(R.id.btn_back);
+        mTextView = itemView.findViewById(R.id.txt_info);
+        mButton = itemView.findViewById(R.id.btn_back);
 
     }
 
     @Override
     public void initTypeface() {
         Typeface typeface = ((MainActivity) getActivity()).getTypeface();
-        txt.setTypeface(typeface);
-        btn.setTypeface(typeface);
+        mTextView.setTypeface(typeface);
+        mButton.setTypeface(typeface);
     }
 
     @Override
     public void initOnClick() {
-        btn.setOnClickListener(new View.OnClickListener() {
+        mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((MainActivity)getActivity()).replaceFragmentWithoutBackstack(new TMenuFragment(),MainActivity.MENU_FRAGMENT_TAG);

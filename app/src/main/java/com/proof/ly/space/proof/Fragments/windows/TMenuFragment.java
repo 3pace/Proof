@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
+
 import com.proof.ly.space.proof.Adapters.RecyclerMenuAdapter;
 import com.proof.ly.space.proof.Interfaces.FragmentInterface;
 import com.proof.ly.space.proof.Interfaces.OnItemClick;
@@ -28,11 +28,10 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  */
 
 public class TMenuFragment extends Fragment implements FragmentInterface {
-    private TextView txt_tbar;
-    private Typeface tf;
-    private RecyclerMenuAdapter adapter;
-    private RecyclerView rview;
-    private ArrayList<String> arrayList = new ArrayList<>();
+
+    private RecyclerMenuAdapter mRecyclerMenuAdapter;
+    private RecyclerView mRecyclerView;
+    private ArrayList<String> mArrayList = new ArrayList<>();
     public static boolean isLoading = false;
 
 
@@ -66,33 +65,33 @@ public class TMenuFragment extends Fragment implements FragmentInterface {
     public void addMenuItems() {
 
 
-        arrayList.add(getResources().getString(R.string.testing));
-        arrayList.add(getResources().getString(R.string.question_db));
-        arrayList.add(getResources().getString(R.string.search_title));
-        arrayList.add(getResources().getString(R.string.settings));
+        mArrayList.add(getResources().getString(R.string.testing));
+        mArrayList.add(getResources().getString(R.string.question_db));
+        mArrayList.add(getResources().getString(R.string.search_title));
+        mArrayList.add(getResources().getString(R.string.settings));
 
-        //adapter.notifyDataSetChanged();
+        //mRecyclerMenuAdapter.notifyDataSetChanged();
     }
     public void updateAdapter(){
 
-        adapter.notifyDataSetChanged();
-        rview.setAdapter(adapter);
+        mRecyclerMenuAdapter.notifyDataSetChanged();
+        mRecyclerView.setAdapter(mRecyclerMenuAdapter);
     }
 
     @Override
     public void initViews(View itemView) {
-        rview = itemView.findViewById(R.id.rview);
+        mRecyclerView = itemView.findViewById(R.id.rview);
     }
 
     @Override
     public void initTypeface() {
-        tf = ((MainActivity) getActivity()).getTypeface();
-        adapter.setTypeface(tf);
+        Typeface typeface = ((MainActivity) getActivity()).getTypeface();
+        mRecyclerMenuAdapter.setTypeface(typeface);
     }
 
     @Override
     public void initOnClick() {
-        adapter.setOnItemClick(new OnItemClick() {
+        mRecyclerMenuAdapter.setOnItemClick(new OnItemClick() {
 
             @Override
             public void onClick(int pos) {
@@ -117,7 +116,7 @@ public class TMenuFragment extends Fragment implements FragmentInterface {
                 }
             }
         });
-        adapter.setOnHeaderClick(new OnItemClickView() {
+        mRecyclerMenuAdapter.setOnHeaderClick(new OnItemClickView() {
             @Override
             public void onClick(int pos, View view) {
                 switch (view.getId()) {
@@ -136,17 +135,17 @@ public class TMenuFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initObjects() {
-        adapter = new RecyclerMenuAdapter(arrayList);
-        adapter.addLessonHolder(true);
+        mRecyclerMenuAdapter = new RecyclerMenuAdapter(mArrayList);
+        mRecyclerMenuAdapter.addLessonHolder(true);
     }
 
     @Override
     public void initSetters() {
 
-        rview.setLayoutManager(new LinearLayoutManager(getContext()));
-        rview.setAdapter(adapter);
-        rview.setHasFixedSize(true);
-        OverScrollDecoratorHelper.setUpOverScroll(rview, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
-        adapter.setLessonManager(((MainActivity) getActivity()).getmLessonManager());
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mRecyclerMenuAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        OverScrollDecoratorHelper.setUpOverScroll(mRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+        mRecyclerMenuAdapter.setLessonManager(((MainActivity) getActivity()).getmLessonManager());
     }
 }

@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     path.append("/").append(fm.getFragments().get(i).getTag());
                 }
                 toolbarPath(path.toString(), path.length() - end);
-                Log.d("test", "back " + path.toString());
+
 
             }
         });
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         if (menu.getItem(0).getIcon() != null)
-            if (mAuth.getCurrentUser()!=null)
+            if (mAuth.getCurrentUser() != null)
                 menu.getItem(0).getIcon().setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
             else
                 menu.getItem(0).getIcon().setColorFilter(getClickedColor(), PorterDuff.Mode.SRC_ATOP);
@@ -258,10 +258,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public TinyDB getTinyDB() {
         if (tinyDB != null) {
-            Log.d("test", "getTinyDB: ");
             return tinyDB;
         } else {
-            Log.d("test", "getTinyDB: new ");
             return tinyDB = new TinyDB(getApplicationContext());
         }
     }
@@ -289,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             autoflip = mSettingsManager.getAutoflipState();
             quesCount = mSettingsManager.getQuesCount();
             mLocalDBVersion = mSettingsManager.getDBVersion();
-            Log.d("SDASD", "onPreExecute: STARTED");
+
 
         }
 
@@ -306,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onPostExecute(aVoid);
             LessonManager.isLessonChangedForTesting = false;
             TMenuFragment.isLoading = false;
-            Log.d("test", "FIRST LOAD QUESTION SUCCCES");
+
 
         }
     }
@@ -326,9 +324,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return getTheme().resolveAttribute(R.attr.clicked_answer, mTypedValue, true) ?
                 mTypedValue.data : getResources().getColor(R.color.grey);
     }
-
-
-
 
 
     @Override

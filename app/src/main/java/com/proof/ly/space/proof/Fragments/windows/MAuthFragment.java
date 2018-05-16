@@ -20,6 +20,7 @@ import com.proof.ly.space.proof.R;
 public class MAuthFragment extends Fragment implements FragmentInterface {
     private static MViewPager mViewPager;
     private AAVPAdapter mAdapter;
+
     public MAuthFragment() {
 
     }
@@ -33,7 +34,7 @@ public class MAuthFragment extends Fragment implements FragmentInterface {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.auth_fragment,container,false);
+        return inflater.inflate(R.layout.auth_fragment, container, false);
     }
 
     @Override
@@ -70,9 +71,10 @@ public class MAuthFragment extends Fragment implements FragmentInterface {
         mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.none);
     }
 
-    public static void toRegisterPage(){
+    public static void toRegisterPage() {
         mViewPager.setCurrentItem(2);
     }
+
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         menu.clear();

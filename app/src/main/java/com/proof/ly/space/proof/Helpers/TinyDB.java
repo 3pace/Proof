@@ -11,7 +11,6 @@ import java.util.Map;
 //import com.google.gson.Gson;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -25,12 +24,12 @@ import android.util.Log;
 
 
 public class TinyDB {
-    private SharedPreferences preferences;
+    private SharedPreferences mPreferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;
-    private String lastImagePath = "";
+    private String mLastImagePath = "";
 
     public TinyDB(Context appContext) {
-        preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(appContext);
     }
 
 
@@ -58,7 +57,7 @@ public class TinyDB {
      * @return string path of the last saved image
      */
     public String getSavedImagePath() {
-        return lastImagePath;
+        return mLastImagePath;
     }
 
 
@@ -77,7 +76,7 @@ public class TinyDB {
         String mFullPath = setupFullPath(theImageName);
 
         if (!mFullPath.equals("")) {
-            lastImagePath = mFullPath;
+            mLastImagePath = mFullPath;
             saveBitmap(mFullPath, theBitmap);
         }
 
@@ -174,7 +173,7 @@ public class TinyDB {
      * @return int value at 'key' or 'defaultValue' if key not found
      */
     public int getInt(String key) {
-        return preferences.getInt(key, 0);
+        return mPreferences.getInt(key, 0);
     }
 
     /**
@@ -183,7 +182,7 @@ public class TinyDB {
      * @return ArrayList of Integers
      */
     public ArrayList<Integer> getListInt(String key) {
-        String[] myList = TextUtils.split(preferences.getString(key, ""), "‚‗‚");
+        String[] myList = TextUtils.split(mPreferences.getString(key, ""), "‚‗‚");
         ArrayList<String> arrayToList = new ArrayList<String>(Arrays.asList(myList));
         ArrayList<Integer> newList = new ArrayList<Integer>();
 
@@ -200,7 +199,7 @@ public class TinyDB {
      * @return long value at 'key' or 'defaultValue' if key not found
      */
     public long getLong(String key, long defaultValue) {
-        return preferences.getLong(key, defaultValue);
+        return mPreferences.getLong(key, defaultValue);
     }
 
     /**
@@ -209,7 +208,7 @@ public class TinyDB {
      * @return float value at 'key' or 'defaultValue' if key not found
      */
     public float getFloat(String key) {
-        return preferences.getFloat(key, 0);
+        return mPreferences.getFloat(key, 0);
     }
 
     /**
@@ -235,7 +234,7 @@ public class TinyDB {
      * @return ArrayList of Double
      */
     public ArrayList<Double> getListDouble(String key) {
-        String[] myList = TextUtils.split(preferences.getString(key, ""), "‚‗‚");
+        String[] myList = TextUtils.split(mPreferences.getString(key, ""), "‚‗‚");
         ArrayList<String> arrayToList = new ArrayList<String>(Arrays.asList(myList));
         ArrayList<Double> newList = new ArrayList<Double>();
 
@@ -251,7 +250,7 @@ public class TinyDB {
      * @return ArrayList of Longs
      */
     public ArrayList<Long> getListLong(String key) {
-        String[] myList = TextUtils.split(preferences.getString(key, ""), "‚‗‚");
+        String[] myList = TextUtils.split(mPreferences.getString(key, ""), "‚‗‚");
         ArrayList<String> arrayToList = new ArrayList<String>(Arrays.asList(myList));
         ArrayList<Long> newList = new ArrayList<Long>();
 
@@ -267,7 +266,7 @@ public class TinyDB {
      * @return String value at 'key' or "" (empty String) if key not found
      */
     public String getString(String key) {
-        return preferences.getString(key, "");
+        return mPreferences.getString(key, "");
     }
 
     /**
@@ -276,7 +275,7 @@ public class TinyDB {
      * @return ArrayList of String
      */
     public ArrayList<String> getListString(String key) {
-        return new ArrayList<String>(Arrays.asList(TextUtils.split(preferences.getString(key, ""), "‚‗‚")));
+        return new ArrayList<String>(Arrays.asList(TextUtils.split(mPreferences.getString(key, ""), "‚‗‚")));
     }
 
     /**
@@ -285,7 +284,7 @@ public class TinyDB {
      * @return boolean value at 'key' or 'defaultValue' if key not found
      */
     public boolean getBoolean(String key) {
-        return preferences.getBoolean(key, false);
+        return mPreferences.getBoolean(key, false);
     }
 
     /**
@@ -343,7 +342,7 @@ public class TinyDB {
      */
     public void putInt(String key, int value) {
         checkForNullKey(key);
-        preferences.edit().putInt(key, value).apply();
+        mPreferences.edit().putInt(key, value).apply();
     }
 
     /**
@@ -354,7 +353,7 @@ public class TinyDB {
     public void putListInt(String key, ArrayList<Integer> intList) {
         checkForNullKey(key);
         Integer[] myIntList = intList.toArray(new Integer[intList.size()]);
-        preferences.edit().putString(key, TextUtils.join("‚‗‚", myIntList)).apply();
+        mPreferences.edit().putString(key, TextUtils.join("‚‗‚", myIntList)).apply();
     }
 
     /**
@@ -364,7 +363,7 @@ public class TinyDB {
      */
     public void putLong(String key, long value) {
         checkForNullKey(key);
-        preferences.edit().putLong(key, value).apply();
+        mPreferences.edit().putLong(key, value).apply();
     }
 
     /**
@@ -375,7 +374,7 @@ public class TinyDB {
     public void putListLong(String key, ArrayList<Long> longList) {
         checkForNullKey(key);
         Long[] myLongList = longList.toArray(new Long[longList.size()]);
-        preferences.edit().putString(key, TextUtils.join("‚‗‚", myLongList)).apply();
+        mPreferences.edit().putString(key, TextUtils.join("‚‗‚", myLongList)).apply();
     }
 
     /**
@@ -385,7 +384,7 @@ public class TinyDB {
      */
     public void putFloat(String key, float value) {
         checkForNullKey(key);
-        preferences.edit().putFloat(key, value).apply();
+        mPreferences.edit().putFloat(key, value).apply();
     }
 
     /**
@@ -406,7 +405,7 @@ public class TinyDB {
     public void putListDouble(String key, ArrayList<Double> doubleList) {
         checkForNullKey(key);
         Double[] myDoubleList = doubleList.toArray(new Double[doubleList.size()]);
-        preferences.edit().putString(key, TextUtils.join("‚‗‚", myDoubleList)).apply();
+        mPreferences.edit().putString(key, TextUtils.join("‚‗‚", myDoubleList)).apply();
     }
 
     /**
@@ -416,7 +415,7 @@ public class TinyDB {
      */
     public void putString(String key, String value) {
         checkForNullKey(key); checkForNullValue(value);
-        preferences.edit().putString(key, value).apply();
+        mPreferences.edit().putString(key, value).apply();
     }
 
     /**
@@ -427,7 +426,7 @@ public class TinyDB {
     public void putListString(String key, ArrayList<String> stringList) {
         checkForNullKey(key);
         String[] myStringList = stringList.toArray(new String[stringList.size()]);
-        preferences.edit().putString(key, TextUtils.join("‚‗‚", myStringList)).apply();
+        mPreferences.edit().putString(key, TextUtils.join("‚‗‚", myStringList)).apply();
     }
 
     /**
@@ -437,7 +436,7 @@ public class TinyDB {
      */
     public void putBoolean(String key, boolean value) {
         checkForNullKey(key);
-        preferences.edit().putBoolean(key, value).apply();
+        mPreferences.edit().putBoolean(key, value).apply();
     }
 
     /**
@@ -486,7 +485,7 @@ public class TinyDB {
      * @param key SharedPreferences key
      */
     public void remove(String key) {
-        preferences.edit().remove(key).apply();
+        mPreferences.edit().remove(key).apply();
     }
 
     /**
@@ -503,7 +502,7 @@ public class TinyDB {
      * Clear SharedPreferences (remove everything)
      */
     public void clear() {
-        preferences.edit().clear().apply();
+        mPreferences.edit().clear().apply();
     }
 
     /**
@@ -511,7 +510,7 @@ public class TinyDB {
      * @return a Map representing a list of key/value pairs from SharedPreferences
      */
     public Map<String, ?> getAll() {
-        return preferences.getAll();
+        return mPreferences.getAll();
     }
 
 
@@ -522,7 +521,7 @@ public class TinyDB {
     public void registerOnSharedPreferenceChangeListener(
             SharedPreferences.OnSharedPreferenceChangeListener listener) {
 
-        preferences.registerOnSharedPreferenceChangeListener(listener);
+        mPreferences.registerOnSharedPreferenceChangeListener(listener);
     }
 
     /**
@@ -532,7 +531,7 @@ public class TinyDB {
     public void unregisterOnSharedPreferenceChangeListener(
             SharedPreferences.OnSharedPreferenceChangeListener listener) {
 
-        preferences.unregisterOnSharedPreferenceChangeListener(listener);
+        mPreferences.unregisterOnSharedPreferenceChangeListener(listener);
     }
 
 

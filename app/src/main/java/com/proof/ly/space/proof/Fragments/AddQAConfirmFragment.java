@@ -22,10 +22,10 @@ import com.proof.ly.space.proof.R;
  */
 
 public class AddQAConfirmFragment extends Fragment implements FragmentInterface{
-    private TextView txt_title;
-    private Button btn_confirm;
-    private QManager qManager;
-    private DBManager dbManager;
+    private TextView mTextViewTitle;
+    private Button mButtonConfirm;
+    private QManager mQManager;
+    private DBManager mDBManager;
     public static Fragment getInstance(){
         return new AddQAConfirmFragment();
     }
@@ -33,8 +33,8 @@ public class AddQAConfirmFragment extends Fragment implements FragmentInterface{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        qManager = ((MainActivity)getActivity()).getmQuestionManager();
-        dbManager = ((MainActivity)getActivity()).getmDBManager();
+        mQManager = ((MainActivity)getActivity()).getmQuestionManager();
+        mDBManager = ((MainActivity)getActivity()).getmDBManager();
     }
 
     @Nullable
@@ -55,20 +55,20 @@ public class AddQAConfirmFragment extends Fragment implements FragmentInterface{
 
     @Override
     public void initViews(View itemView) {
-        txt_title = itemView.findViewById(R.id.txt_confirm_title);
-        btn_confirm = itemView.findViewById(R.id.btn_confirm);
+        mTextViewTitle = itemView.findViewById(R.id.txt_confirm_title);
+        mButtonConfirm = itemView.findViewById(R.id.btn_confirm);
     }
 
     @Override
     public void initTypeface() {
         Typeface typeface = ((MainActivity) getActivity()).getTypeface();
-        txt_title.setTypeface(typeface);
-        btn_confirm.setTypeface(typeface);
+        mTextViewTitle.setTypeface(typeface);
+        mButtonConfirm.setTypeface(typeface);
     }
 
     @Override
     public void initOnClick() {
-        btn_confirm.setOnClickListener(new View.OnClickListener() {
+        mButtonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addQuestion();
@@ -87,7 +87,7 @@ public class AddQAConfirmFragment extends Fragment implements FragmentInterface{
 
     }
     public void addQuestion(){
-        String q = qManager.getJson();
-        dbManager.addQuestion(q, USManager.getUID());
+        String q = mQManager.getJson();
+        mDBManager.addQuestion(q, USManager.getUID());
     }
 }

@@ -1,4 +1,5 @@
 package com.proof.ly.space.proof.Utils;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -6,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.DrawableCompat;
+
 /**
  * Created by aman on 4/28/18.
  */
@@ -23,6 +25,6 @@ public class MSnackUtils {
     public static Drawable makeTransparentDrawable(Context context, int width, int heigth) {
         Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
         Bitmap bmp = Bitmap.createBitmap(width, heigth, conf);
-        return new BitmapDrawable(context.getResources(),bmp);
+        return new BitmapDrawable(context.getResources(), bmp);
     }
 }

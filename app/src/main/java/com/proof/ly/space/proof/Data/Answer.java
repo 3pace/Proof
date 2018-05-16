@@ -4,7 +4,7 @@ package com.proof.ly.space.proof.Data;
  * Created by aman on 3/12/18.
  */
 
-public class Answers {
+public class Answer {
     private String mAnswer;
     private boolean mIsCorrect;
     private int mIsChecked = 0;
@@ -29,7 +29,7 @@ public class Answers {
         this.mIsEnabled = enabled;
     }
 
-    public Answers(String answer,boolean isCorrect) {
+    public Answer(String answer, boolean isCorrect) {
         this.mAnswer = answer;
         this.mIsCorrect = isCorrect;
 

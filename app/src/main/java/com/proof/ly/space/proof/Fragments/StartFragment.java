@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.proof.ly.space.proof.Fragments.windows.MTestingFragment;
 import com.proof.ly.space.proof.Helpers.SettingsManager;
 import com.proof.ly.space.proof.Interfaces.FragmentInterface;
@@ -22,11 +23,12 @@ import com.proof.ly.space.proof.R;
  */
 public class StartFragment extends Fragment implements FragmentInterface {
 
-    private TextView txt_info;
-    private Button btn_start;
+    private TextView mTextViewInfo;
+    private Button mButtonStart;
 
     public StartFragment() {
     }
+
     public static Fragment getInstance(int position) {
         Bundle bundle = new Bundle();
         bundle.putInt("pos", position);
@@ -38,7 +40,7 @@ public class StartFragment extends Fragment implements FragmentInterface {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_start, container, false);
     }
 
@@ -55,21 +57,21 @@ public class StartFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initViews(View itemView) {
-        btn_start = itemView.findViewById(R.id.btn_start);
-        txt_info = itemView.findViewById(R.id.txt_info);
+        mButtonStart = itemView.findViewById(R.id.btn_start);
+        mTextViewInfo = itemView.findViewById(R.id.txt_info);
     }
 
     @Override
     public void initTypeface() {
         Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/ubuntum.ttf");
-        btn_start.setTypeface(typeface);
-        txt_info.setTypeface(typeface);
+        mButtonStart.setTypeface(typeface);
+        mTextViewInfo.setTypeface(typeface);
     }
 
 
     @Override
     public void initOnClick() {
-        btn_start.setOnClickListener(new View.OnClickListener() {
+        mButtonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 MTestingFragment.startTesting();
@@ -86,18 +88,18 @@ public class StartFragment extends Fragment implements FragmentInterface {
     @Override
     public void initSetters() {
 
-        if (MTestingFragment.loading){
-            txt_info.setText("");
-        }else {
+        if (MTestingFragment.loading) {
+            mTextViewInfo.setText("");
+        } else {
             int qCount = getQuestionsCount();
 
             if (qCount == 0) {
                 nullAnswers();
                 if (((MainActivity) getActivity()).getmDBManager().isAllQuestionsViewed()) {
-                    btn_start.setText(getResources().getString(R.string.new_cycle).toUpperCase());
-                    btn_start.setVisibility(View.VISIBLE);
-                    btn_start.setClickable(true);
-                    btn_start.setOnClickListener(new View.OnClickListener() {
+                    mButtonStart.setText(getResources().getString(R.string.new_cycle).toUpperCase());
+                    mButtonStart.setVisibility(View.VISIBLE);
+                    mButtonStart.setClickable(true);
+                    mButtonStart.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             ((MainActivity) getActivity()).getmDBManager().newCycle();
@@ -125,19 +127,20 @@ public class StartFragment extends Fragment implements FragmentInterface {
                         .append(((MainActivity) getActivity()).getmDBManager().getCycleNum())
                         ;
 
-            txt_info.setText(text.toString());
+            mTextViewInfo.setText(text.toString());
         }
     }
-    private void nullAnswers(){
-        txt_info.setText(getResources().getString(R.string.no_questions));
-        btn_start.setVisibility(View.INVISIBLE);
-        btn_start.setClickable(false);
-        txt_info.setTextColor(getResources().getColor(R.color.colorAccent));
+
+    private void nullAnswers() {
+        mTextViewInfo.setText(getResources().getString(R.string.no_questions));
+        mButtonStart.setVisibility(View.INVISIBLE);
+        mButtonStart.setClickable(false);
+        mTextViewInfo.setTextColor(getResources().getColor(R.color.colorAccent));
 
 
     }
 
-    private int getQuestionsCount(){
+    private int getQuestionsCount() {
         return ((MainActivity) getActivity()).getmQuestionManager().getQ().size();
     }
 

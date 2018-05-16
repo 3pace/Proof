@@ -7,7 +7,7 @@
     <string name="start_test_title">Начать</string>
     <string name="colored">Видимость правильного ответа</string>
     <string name="settings">Настройки</string>
-    <string name="result_test_title">Тестирование завершено</string>
+    <string name="result_test_title">Тестирование завершено.</string>
     <string name="stop_testing">Завершить</string>
     <string name="question_db">Редактор</string>
     <string name="add_question_title">Введите вопрос</string>
@@ -74,4 +74,8 @@
     <string name="has_last_version">У Вас последняя версия</string>
     <string name="reset_update">Сбросить и обновить</string>
     <string name="check_update">Проверить наличие обновлений</string>
+    <string name="from">Из</string>
+    <string name="result">Результат:</string>
+    <string name="one_correct_answer">Должен быть минимум 1 правильный ответ.</string>
+    <string name="one_not_correct_answer">Должен быть минимум 1 неправильный ответ.</string>
 </resources>

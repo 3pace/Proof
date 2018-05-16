@@ -4,11 +4,11 @@ package com.proof.ly.space.proof.Data;
  * Created by aman on 25.03.18.
  */
 
-public class NewAnswers {
+public class NewAnswer {
     private String mAnswer;
     private boolean mIsCorrect;
 
-    public NewAnswers(String answer, boolean mIsCorrect) {
+    public NewAnswer(String answer, boolean mIsCorrect) {
         this.mAnswer = answer;
         this.mIsCorrect = mIsCorrect;
     }

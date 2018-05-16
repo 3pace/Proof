@@ -5,27 +5,29 @@ package com.proof.ly.space.proof.Data;
  */
 
 public class SearchData {
-    private String question,answer;
+    private String mQuestion, mAnswer;
 
-    public SearchData(){}
+    public SearchData() {
+    }
+
     public SearchData(String question, String answer) {
-        this.question = question;
-        this.answer = answer;
+        this.mQuestion = question;
+        this.mAnswer = answer;
     }
 
     public String getAnswer() {
-        return answer;
+        return mAnswer;
     }
 
     public String getQuestion() {
-        return question;
+        return mQuestion;
     }
 
     public void setQuestion(String question) {
-        this.question = question;
+        this.mQuestion = question;
     }
 
     public void setAnswer(String answer) {
-        this.answer = answer;
+        this.mAnswer = answer;
     }
 }

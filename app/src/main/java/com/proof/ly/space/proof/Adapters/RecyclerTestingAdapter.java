@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.proof.ly.space.proof.Data.Answers;
+import com.proof.ly.space.proof.Data.Answer;
 import com.proof.ly.space.proof.Helpers.SettingsManager;
 import com.proof.ly.space.proof.Interfaces.OnItemClick;
 import com.proof.ly.space.proof.R;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 public class RecyclerTestingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<Answers> mArrayList;
+    private ArrayList<Answer> mArrayList;
     private Typeface mTypeface;
     private OnItemClick mOnItemClick;
     private final int QUESTION = 0, ANSWER = 1;
@@ -35,11 +35,12 @@ public class RecyclerTestingAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private String mQuestion;
     private int mDisabledColor, mClickedColor;
     private boolean mAdsShow;
+    private static final int ADS_CHANCE = 7;
 
-    public RecyclerTestingAdapter(ArrayList<Answers> arrayList) {
+    public RecyclerTestingAdapter(ArrayList<Answer> arrayList) {
         this.mArrayList = arrayList;
         mAdsPos = (int) (Math.random() * (arrayList.size())) + 1;
-        mAdsShow = ((int) (Math.random() * 5)) == 1;
+        mAdsShow = ((int) (Math.random() * ADS_CHANCE)) == 1;
 
 
     }
@@ -66,18 +67,18 @@ public class RecyclerTestingAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             ItemHolder itemHolder = (ItemHolder) holder;
             int pos = mAdsShow && position > mAdsPos ? position - 2 : position - 1;
             Log.d("test", pos + " : " + position + " * " + mArrayList.size());
-            Answers answers = mArrayList.get(pos);
-            itemHolder.mTextViewAnswer.setText(answers.getAnswer());
-            itemHolder.mTextViewAnswer.setEnabled(answers.isEnabled());
-            switch (answers.getIsChecked()) {
+            Answer answer = mArrayList.get(pos);
+            itemHolder.mTextViewAnswer.setText(answer.getAnswer());
+            itemHolder.mTextViewAnswer.setEnabled(answer.isEnabled());
+            switch (answer.getIsChecked()) {
                 case 1:
                     if (SettingsManager.colored) {
-                        if (answers.isCorrectChecked())
+                        if (answer.isCorrectChecked())
                             itemHolder.mTextViewAnswer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorPrimary));
                         else
                             itemHolder.mTextViewAnswer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorAccent));
                     } else {
-                        if (answers.isClicked())
+                        if (answer.isClicked())
                             itemHolder.mTextViewAnswer.setTextColor(mClickedColor);
                         else
                             itemHolder.mTextViewAnswer.setTextColor(mDisabledColor);
@@ -89,7 +90,7 @@ public class RecyclerTestingAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     break;
                 case 3:
                     if (SettingsManager.colored) {
-                        if (answers.isCorrectChecked())
+                        if (answer.isCorrectChecked())
                             itemHolder.mTextViewAnswer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorPrimary));
                         else
                             itemHolder.mTextViewAnswer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorAccent));
@@ -99,7 +100,7 @@ public class RecyclerTestingAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     break;
                 case 4:
                     if (SettingsManager.colored) {
-                        if (answers.isCorrectChecked())
+                        if (answer.isCorrectChecked())
                             itemHolder.mTextViewAnswer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorPrimary));
                         else
                             itemHolder.mTextViewAnswer.setTextColor(itemHolder.itemView.getContext().getResources().getColor(R.color.colorAccent));
@@ -158,7 +159,7 @@ public class RecyclerTestingAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     class AdsHolder extends RecyclerView.ViewHolder {
         private AdView mAdView;
 
-        public AdsHolder(View itemView) {
+        private AdsHolder(View itemView) {
             super(itemView);
             mAdView = itemView.findViewById(R.id.banner_AdView);
             mAdView.setVisibility(View.GONE);

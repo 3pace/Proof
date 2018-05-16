@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Question {
     private int mQuestionId;
     private String mQuestion;
-    private ArrayList<Answers> mArrayListAnswers;
+    private ArrayList<Answer> mArrayListAnswers;
     private int mCorrectAnswersCount;
     private boolean mIsChecked = false;
     private boolean mIsCorrectChecked = false;
@@ -17,9 +17,9 @@ public class Question {
     private int mNotCorrectCheckedAnswersCount = 0;
     private int mLeftCorrectClickCount = 0;
     private boolean created = false;
-    private int mNotCorrectCheckedQuestionsCount = 0;
+    private int mNotCorrectCheckedQuestionsCount = 0, mCorrectCheckedQuestionsCount = 0;
 
-    public Question(int mQuestionId, String mQuestion, ArrayList<Answers> mArrayListAnswers, int mCorrectAnswersCount){
+    public Question(int mQuestionId, String mQuestion, ArrayList<Answer> mArrayListAnswers, int mCorrectAnswersCount){
         this.mQuestionId = mQuestionId;
         this.mQuestion = mQuestion;
         this.mArrayListAnswers = mArrayListAnswers;
@@ -74,7 +74,7 @@ public class Question {
         this.mIsCorrectChecked = correctChecked;
     }
 
-    public ArrayList<Answers> getArrayListAnswers() {
+    public ArrayList<Answer> getArrayListAnswers() {
         return mArrayListAnswers;
     }
 
@@ -103,4 +103,13 @@ public class Question {
     public void setNotCorrectCheckedQuestionsCount(int notCorrectCheckedQuestionsCount) {
         this.mNotCorrectCheckedQuestionsCount = notCorrectCheckedQuestionsCount;
     }
+
+    public int getCorrectCheckedQuestionsCount() {
+        return mCorrectCheckedQuestionsCount;
+    }
+
+    public void setCorrectCheckedQuestionsCount(int correctCheckedQuestionsCount) {
+        mCorrectCheckedQuestionsCount = correctCheckedQuestionsCount;
+    }
 }
+

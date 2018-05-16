@@ -10,6 +10,7 @@ import android.view.View;
 public class ClickEffect {
     private static int DURATION = 500;
     private static float ALPHA = 0.2f;
+
     public static void setView(View view) {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -30,14 +31,15 @@ public class ClickEffect {
             }
         });
     }
-    public static void setViewFast(View view){
+
+    public static void setViewFast(View view) {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()){
+                switch (motionEvent.getAction()) {
 
                     case MotionEvent.ACTION_DOWN:
-                        view.animate().alpha(ALPHA).setDuration(DURATION-300).start();
+                        view.animate().alpha(ALPHA).setDuration(DURATION - 300).start();
                         break;
                     case MotionEvent.ACTION_UP:
                         view.animate().alpha(1f).setDuration(DURATION).start();

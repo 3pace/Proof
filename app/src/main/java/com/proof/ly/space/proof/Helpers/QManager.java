@@ -3,9 +3,9 @@ package com.proof.ly.space.proof.Helpers;
 import android.content.Context;
 import android.util.Log;
 
-import com.proof.ly.space.proof.Data.Answers;
+import com.proof.ly.space.proof.Data.Answer;
 import com.proof.ly.space.proof.Data.JsonQuestion;
-import com.proof.ly.space.proof.Data.NewAnswers;
+import com.proof.ly.space.proof.Data.NewAnswer;
 import com.proof.ly.space.proof.Data.Question;
 
 import org.json.JSONArray;
@@ -23,33 +23,35 @@ import static android.content.ContentValues.TAG;
  */
 
 public class QManager {
-    private ArrayList<Question> questionsList = new ArrayList<>();
-    private ArrayList<JsonQuestion> questions = new ArrayList<>();
-    private DBManager dbManager;
-    private JSONObject object;
+    private ArrayList<Question> mArrayListQuestions = new ArrayList<>();
+    private ArrayList<JsonQuestion> mArrayListJsonQuestions = new ArrayList<>();
+    private DBManager mDbManager;
+    private JSONObject mJsonObject;
     public static boolean isGenerate = false;
 
     public QManager(DBManager dbManager, Context c) {
-        this.dbManager = dbManager;
+        this.mDbManager = dbManager;
     }
 
     public ArrayList<Question> generateQuestionsList() {
 
-        if (isGenerate) questionsList.clear();
-        if (LessonManager.isLessonChangedForTesting) questionsList.clear();
-        if (questionsList.size() <= 0) {
+        if (isGenerate) mArrayListQuestions.clear();
+        if (LessonManager.isLessonChangedForTesting) mArrayListQuestions.clear();
+        if (mArrayListQuestions.size() <= 0) {
             Log.d(TAG, "generateQuestionsList: firstgenrated success");
 
-            for (JsonQuestion jsonQuestion : questions) {
+            for (JsonQuestion jsonQuestion : mArrayListJsonQuestions) {
                 try {
                     JSONObject object = new JSONObject(jsonQuestion.getJsonQuestion());
                     int qId = jsonQuestion.getId();
                     String question = object.getString("question");
                     JSONArray answers = object.getJSONArray("answers");
                     JSONArray canswers = object.getJSONArray("correct");
-                    ArrayList<Answers> a = new ArrayList<>();
+                    ArrayList<Answer> a = new ArrayList<>();
                     boolean isC = false;
                     int cAnswers = 0;//колчиество правильных вариантов
+                    if (answers.length() <= 0)
+                        a.add(new Answer("click :(", isC));
                     for (int j = 0; j < answers.length(); j++) {
                         for (int c = 0; c < canswers.length(); c++) {
                             if (answers.getString(j).equals(canswers.getString(c))) {
@@ -60,11 +62,12 @@ public class QManager {
                                 isC = false;
                             }
                         }
-                        a.add(new Answers(answers.getString(j), isC));
+
+                        a.add(new Answer(answers.getString(j), isC));
+
                     }
                     Collections.shuffle(a);
-                    questionsList.add(new Question(qId, question, a, cAnswers));
-
+                    mArrayListQuestions.add(new Question(qId, question, a, cAnswers));
 
 
                 } catch (JSONException e) {
@@ -72,36 +75,36 @@ public class QManager {
                 }
             }
         }
-        return questionsList;
+        return mArrayListQuestions;
     }
 
     public ArrayList<Question> getQ() {
-        return questionsList;
+        return mArrayListQuestions;
     }
 
     public ArrayList<JsonQuestion> generateQFromDB() {
-        questions.clear();
-        questions.addAll(dbManager.getQuestionFromAssets());
-        return questions;
+        mArrayListJsonQuestions.clear();
+        mArrayListJsonQuestions.addAll(mDbManager.getQuestionFromAssets());
+        return mArrayListJsonQuestions;
     }
 
     public ArrayList<JsonQuestion> generateQFromDB(int count) {
-        //questions.clear();
+        //mArrayListJsonQuestions.clear();
 /*
         проверяем если уже прошла генерация при запуске приложения,
         то каждый раз при старте тестирование, очищаем список и генерируем новые вопросы,
         а если нет, то берем сгенерированный список из запуска приложения */
-        if (isGenerate) questions.clear();
-        if (LessonManager.isLessonChangedForTesting) questions.clear();
+        if (isGenerate) mArrayListJsonQuestions.clear();
+        if (LessonManager.isLessonChangedForTesting) mArrayListJsonQuestions.clear();
 
-        if (questions.size() <= 0) {
+        if (mArrayListJsonQuestions.size() <= 0) {
             Log.d(TAG, "generateQFromDB: GENERATE");
             if (SettingsManager.cycleMode)
-                questions.addAll(dbManager.getQuestionFromAssetsWithCycleFromLocalDb(count));
+                mArrayListJsonQuestions.addAll(mDbManager.getQuestionFromAssetsWithCycleFromLocalDb(count));
             else
-                questions.addAll(dbManager.getQuestionListFromLocalDb(count));
+                mArrayListJsonQuestions.addAll(mDbManager.getQuestionListFromLocalDb(count));
         }
-        return questions;
+        return mArrayListJsonQuestions;
     }
 
     public int getResult() {
@@ -110,7 +113,7 @@ public class QManager {
         int total = 0;
         int result = 0;
 
-        for (Question question : questionsList) {
+        for (Question question : mArrayListQuestions) {
             acount = question.getArrayListAnswers().size() > 5;//если больше 5, то значит 1 балл дает 2 балла
             points = question.getCorrectCheckedAnswersCount();
             ccount = question.getCorrectAnswersCount();
@@ -154,11 +157,80 @@ public class QManager {
         return result;
     }
 
+    public HashMap<String, Integer> getTestingResult() {
+        HashMap<String, Integer> resultMap = new HashMap<>();
+        boolean isCountMore5;
+        int questionsCount = 0;
+        int correctAnswersInQuestion, correctCheckedAnswers;
+        int correctQuestionsCount = 0, notCorrectQuestionsCount = 0, totalPoints = 0, mistakes = 0;
+        int editedPoints = 0, notChecked = 0;
+        int totalPercent;
+        if (mArrayListQuestions != null) {
+            questionsCount = mArrayListQuestions.size();
+
+            for (Question question : mArrayListQuestions) {
+                correctQuestionsCount += question.isCorrectChecked() ? 1 : 0;
+                notCorrectQuestionsCount += !question.isCorrectChecked() ? 1 : 0;
+                mistakes += question.getNotCorrectCheckedAnswersCount();
+                notChecked += question.isChecked() ? 0 : 1;
+
+                isCountMore5 = question.getArrayListAnswers().size() > 5;
+                correctAnswersInQuestion = question.getCorrectAnswersCount();
+                correctCheckedAnswers = question.getCorrectCheckedAnswersCount();
+
+                switch (correctAnswersInQuestion) {
+
+                    case 3:
+                        if (correctCheckedAnswers == 3) editedPoints = 2;
+                        else if (correctCheckedAnswers == 2) editedPoints = 1;
+                        else if (correctCheckedAnswers == 1) editedPoints = 0;
+                        else if (correctCheckedAnswers == 0) editedPoints = 0;
+
+                        break;
+                    case 2:
+                        if (correctCheckedAnswers == 2) editedPoints = 2;
+                        else if (correctCheckedAnswers == 1) editedPoints = 1;
+                        else if (correctCheckedAnswers == 0) editedPoints = 0;
+                        break;
+                    case 1:
+                        if (isCountMore5) {
+                            if (correctCheckedAnswers == 1) editedPoints = 2;
+                            else if (correctCheckedAnswers == 0) editedPoints = 0;
+                        } else {
+                            if (correctCheckedAnswers == 1) editedPoints = 1;
+                            else if (correctCheckedAnswers == 0) editedPoints = 0;
+                        }
+                        break;
+                    default:
+                        if (correctCheckedAnswers >= 3) editedPoints = 3;
+                        else if (correctCheckedAnswers == 2) editedPoints = 1;
+                        else if (correctCheckedAnswers == 1) editedPoints = 0;
+                        else if (correctCheckedAnswers == 0) editedPoints = 0;
+                        break;
+                }
+
+                totalPoints += editedPoints;
+            }
+
+        }
+        totalPercent = (int) ((correctQuestionsCount * 100f) / questionsCount);
+
+        resultMap.put(MConstans.TESTING_RESULT_CORRECT_QUESTIONS_COUNT, correctQuestionsCount);
+        resultMap.put(MConstans.TESTING_RESULT_NOT_CORRECT_QUESTIONS_COUNT, notCorrectQuestionsCount);
+        resultMap.put(MConstans.TESTING_RESULT_POINTS, totalPoints);
+        resultMap.put(MConstans.TESTING_RESULT_MISTAKES, mistakes);
+        resultMap.put(MConstans.TESTING_RESULT_PERCENT, totalPercent);
+        resultMap.put(MConstans.TESTING_RESULT_NOT_CHECKED_COUNT, notChecked);
+        resultMap.put(MConstans.TESTING_RESULT_QUESTIONS_COUNT, questionsCount);
+
+        return resultMap;
+    }
+
     public HashMap<String, Integer> getNotClickedAnswers() {
         HashMap<String, Integer> map = new HashMap<>();
         int count = 0, notcorrect = 0;
-        if (questionsList != null)
-            for (Question question : questionsList) {
+        if (mArrayListQuestions != null)
+            for (Question question : mArrayListQuestions) {
                 if (!question.isChecked()) {
                     count++;
                 } else {
@@ -173,10 +245,10 @@ public class QManager {
     public void stopTesting() {
 
 
-        for (Question question : questionsList) {
+        for (Question question : mArrayListQuestions) {
             if (!question.isChecked()) {
 
-                for (Answers answer : question.getArrayListAnswers()) {
+                for (Answer answer : question.getArrayListAnswers()) {
                     if (answer.isCorrect()) {
                         answer.setIsChecked(1);
                         answer.setCorrectChecked(true);
@@ -197,13 +269,13 @@ public class QManager {
     }
 
     public void initJson() {
-        object = new JSONObject();
+        mJsonObject = new JSONObject();
 
     }
 
     public void createJsonQuestion(String question) {
         try {
-            object.put("question", question);
+            mJsonObject.put("question", question);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -212,21 +284,21 @@ public class QManager {
     }
 
     public String getJson() {
-        return object.toString();
+        return mJsonObject.toString();
     }
 
-    public void createJsonAnswers(ArrayList<NewAnswers> answers) {
+    public void createJsonAnswers(ArrayList<NewAnswer> answers) {
         JSONArray array = new JSONArray();
         JSONArray carray = new JSONArray();
-        for (NewAnswers a : answers) {
+        for (NewAnswer a : answers) {
             array.put(a.getAnswer());
             if (a.isCorrect())
                 carray.put(a.getAnswer());
 
         }
         try {
-            object.put("answers", array);
-            object.put("correct", carray);
+            mJsonObject.put("answers", array);
+            mJsonObject.put("correct", carray);
         } catch (JSONException e) {
             e.printStackTrace();
         }

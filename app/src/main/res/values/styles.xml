@@ -57,6 +57,11 @@
         <item name="android:textColor">?attr/text_color</item>
         <item name="android:background">?attr/background_color</item>
     </style>
+    <style name="ResultPercentText">
+        <item name="android:textSize">@dimen/x_large_txt_size</item>
+        <item name="android:textColor">?attr/text_color</item>
+        <item name="android:background">?attr/background_color</item>
+    </style>
     <style name="SearchAnswerText">
         <item name="android:textSize">@dimen/normal_txt_size</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>

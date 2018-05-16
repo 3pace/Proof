@@ -42,35 +42,35 @@ public class DBManager {
 
     private static final String MENU_LESSON_ITEMS = "menu_items";
     private static final String FT_QUESTIONS = "questions";
-    private DBHelper helper;
-    private SQLiteDatabase database;
-    private DBSearchHelper dbSearchHelper;
-    private USManager usManager;
-    private Context context;
-    private ArrayList<SearchData> mfullSearchList = new ArrayList<>();
-    private ArrayList<SearchData> mSearchList = new ArrayList<>();
-    private TinyDB tinyDB;
+    private DBHelper mHelper;
+    private SQLiteDatabase mDatabase;
+    private DBSearchHelper mSearchHelper;
+    private USManager mUsManager;
+    private Context mContext;
+    private ArrayList<SearchData> mArrayListSearchFull = new ArrayList<>();
+    private ArrayList<SearchData> mArrayListSearch = new ArrayList<>();
+    private TinyDB mTinyDB;
     private static final String VIEWED_QUESTION_LIST = LessonManager.CURRENT_DB;
     private static final String CYCLE_NUM = "cycle_num_";
-    private float cursorCount = 0;
+    private float mCursorCount = 0;
     private DatabaseReference mRef;
-    public static final String FT_DB_VERSION = "version";
-    public static final String FT_LESSONS = "lessons";
+    private static final String FT_DB_VERSION = "version";
+    private static final String FT_LESSONS = "lessons";
     public static final String FT_ONLINE = "online";
     public static int version = 0;
-    private SettingsManager settingsManager;
-    private boolean databaseIsNew = false;
-    private MainActivity activity;
+    private SettingsManager mSettingsManager;
+    private boolean mIsDatabaseNew = false;
+    private MainActivity mActivity;
 
 
     public DBManager(Context context) {
-        helper = new DBHelper(context);
-        database = helper.getReadableDatabase();
-        usManager = new USManager(context);
-        tinyDB = new TinyDB(context);
+        mHelper = new DBHelper(context);
+        mDatabase = mHelper.getReadableDatabase();
+        mUsManager = new USManager(context);
+        mTinyDB = new TinyDB(context);
         mRef = FirebaseDatabase.getInstance().getReference();
         checkNewDatabaseVersion();
-        this.context = context;
+        this.mContext = context;
 
 
     }
@@ -80,9 +80,9 @@ public class DBManager {
         int viewedSize = viewedQuestions.size();
         String q;
         ArrayList<JsonQuestion> arrayList = new ArrayList<>();
-        database = helper.getReadableDatabase();
-        Cursor cursor = database.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
-        cursorCount = cursor.getCount();
+        mDatabase = mHelper.getReadableDatabase();
+        Cursor cursor = mDatabase.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
+        mCursorCount = cursor.getCount();
         if (cursor.moveToFirst()) {
             whileloop:
             do {
@@ -103,9 +103,9 @@ public class DBManager {
 
     public ArrayList<JsonQuestion> getQuestionListFromLocalDb(int count) {
         String q;
-        database = helper.getReadableDatabase();
+        mDatabase = mHelper.getReadableDatabase();
         ArrayList<JsonQuestion> arrayList = new ArrayList<>();
-        Cursor cursor = database.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
+        Cursor cursor = mDatabase.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
 
         int cursorCount = cursor.getCount();
         int max = cursorCount < count ? cursorCount : count;
@@ -121,8 +121,8 @@ public class DBManager {
         return arrayList;
     }
 
-    boolean checkNewDatabaseVersion() {
-        databaseIsNew = false;
+    private boolean checkNewDatabaseVersion() {
+        mIsDatabaseNew = false;
         mRef.child(FT_DB_VERSION).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -130,7 +130,7 @@ public class DBManager {
                 version = dataSnapshot != null ? dataSnapshot.getValue(Integer.class) : 0;
                 if (mLocalDBVersion < version) {
                     showSnackBarUpdateAvailable();
-                    databaseIsNew = true;
+                    mIsDatabaseNew = true;
                 }
 
 
@@ -141,10 +141,10 @@ public class DBManager {
 
             }
         });
-        return databaseIsNew;
+        return mIsDatabaseNew;
     }
     public boolean checkNewDatabaseVersionFromClick() {
-        databaseIsNew = false;
+        mIsDatabaseNew = false;
         mRef.child(FT_DB_VERSION).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -152,7 +152,7 @@ public class DBManager {
                 version = dataSnapshot != null ? dataSnapshot.getValue(Integer.class) : 0;
                 if (mLocalDBVersion < version) {
                     showSnackBarUpdateAvailable();
-                    databaseIsNew = true;
+                    mIsDatabaseNew = true;
                 } else {
                     showSnackBarHasLastVersion();
 
@@ -166,25 +166,25 @@ public class DBManager {
 
             }
         });
-        return databaseIsNew;
+        return mIsDatabaseNew;
     }
 
     private void showSnackBarUpdateAvailable() {
         MSnackbar.builder()
                 .setDuration(15000)
-                .setActivity(activity)
-                .setText(context.getResources().getString(R.string.update_available))
-                .setTextTypeface(activity.getTypeface())
-                .setBackgroundColor(context.getResources().getColor(R.color.teal))
-                .setActionText(context.getResources().getString(R.string.to_update))
-                .setActionTextTypeface(activity.getTypeface())
+                .setActivity(mActivity)
+                .setText(mContext.getResources().getString(R.string.update_available))
+                .setTextTypeface(mActivity.getTypeface())
+                .setBackgroundColor(mContext.getResources().getColor(R.color.teal))
+                .setActionText(mContext.getResources().getString(R.string.to_update))
+                .setActionTextTypeface(mActivity.getTypeface())
                 .setActionClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         addQuestionsFromFirebase();
                     }
                 })
-                .setActionTextColor(context.getResources().getColor(R.color.white))
+                .setActionTextColor(mContext.getResources().getColor(R.color.white))
                 .info()
                 .show();
 
@@ -192,22 +192,22 @@ public class DBManager {
     private void showSnackBarHasLastVersion() {
         MSnackbar.builder()
                 .setDuration(15000)
-                .setActivity(activity)
-                .setText(context.getResources().getString(R.string.has_last_version))
-                .setTextTypeface(activity.getTypeface())
-                .setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark))
-                .setActionText(context.getResources().getString(R.string.reset_update))
-                .setActionTextTypeface(activity.getTypeface())
+                .setActivity(mActivity)
+                .setText(mContext.getResources().getString(R.string.has_last_version))
+                .setTextTypeface(mActivity.getTypeface())
+                .setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimaryDark))
+                .setActionText(mContext.getResources().getString(R.string.reset_update))
+                .setActionTextTypeface(mActivity.getTypeface())
                 .setActionClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mLocalDBVersion = 0;
-                        settingsManager.saveDBVersion(mLocalDBVersion);
-                        databaseIsNew = true;
+                        mSettingsManager.saveDBVersion(mLocalDBVersion);
+                        mIsDatabaseNew = true;
                         addQuestionsFromFirebase();
                     }
                 })
-                .setActionTextColor(context.getResources().getColor(R.color.white))
+                .setActionTextColor(mContext.getResources().getColor(R.color.white))
                 .info()
                 .show();
 
@@ -216,11 +216,11 @@ public class DBManager {
     private void showSnackBarUpdating() {
         MSnackbar.builder()
                 .setDuration(180000)
-                .setActivity(activity)
-                .setText(context.getResources().getString(R.string.updating))
-                .setTextTypeface(activity.getTypeface())
-                .setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark))
-                .setActionTextTypeface(activity.getTypeface())
+                .setActivity(mActivity)
+                .setText(mContext.getResources().getString(R.string.updating))
+                .setTextTypeface(mActivity.getTypeface())
+                .setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimaryDark))
+                .setActionTextTypeface(mActivity.getTypeface())
                 .build()
                 .show();
 
@@ -229,11 +229,11 @@ public class DBManager {
     private void showSnackBarUpdated() {
         MSnackbar.builder()
                 .setDuration(3000)
-                .setActivity(activity)
-                .setText(context.getResources().getString(R.string.updating_complete))
-                .setTextTypeface(activity.getTypeface())
-                .setActionTextTypeface(activity.getTypeface())
-                .setBackgroundColor(context.getResources().getColor(R.color.teal))
+                .setActivity(mActivity)
+                .setText(mContext.getResources().getString(R.string.updating_complete))
+                .setTextTypeface(mActivity.getTypeface())
+                .setActionTextTypeface(mActivity.getTypeface())
+                .setBackgroundColor(mContext.getResources().getColor(R.color.teal))
                 .success()
                 .show();
 
@@ -242,11 +242,11 @@ public class DBManager {
     private void showSnackBarUpdatingFailed() {
         MSnackbar.builder()
                 .setDuration(3000)
-                .setActivity(activity)
-                .setText(context.getResources().getString(R.string.error))
-                .setTextTypeface(activity.getTypeface())
-                .setActionTextTypeface(activity.getTypeface())
-                .setBackgroundColor(context.getResources().getColor(R.color.colorAccent))
+                .setActivity(mActivity)
+                .setText(mContext.getResources().getString(R.string.error))
+                .setTextTypeface(mActivity.getTypeface())
+                .setActionTextTypeface(mActivity.getTypeface())
+                .setBackgroundColor(mContext.getResources().getColor(R.color.colorAccent))
                 .error()
                 .show();
 
@@ -271,8 +271,8 @@ public class DBManager {
 
     public ArrayList<JsonQuestion> getQuestionFromAssets() {
         ArrayList<JsonQuestion> arrayList = new ArrayList<>();
-        database = getSearchHelper().getReadableDatabase();
-        Cursor cursor = database.query(DBHelper.QUESTION_TABLE, null, null, null, null, null, null);
+        mDatabase = getSearchHelper().getReadableDatabase();
+        Cursor cursor = mDatabase.query(DBHelper.QUESTION_TABLE, null, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 arrayList.add(new JsonQuestion(cursor.getInt(0), cursor.getString(1)));
@@ -286,8 +286,8 @@ public class DBManager {
     public ArrayList<JsonQuestion> getQuestionFromAssets(int count) {
         String q;
         ArrayList<JsonQuestion> arrayList = new ArrayList<>();
-        database = getSearchHelper().getReadableDatabase();
-        Cursor cursor = database.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
+        mDatabase = getSearchHelper().getReadableDatabase();
+        Cursor cursor = mDatabase.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
         int cursorCount = cursor.getCount();
         int max = cursorCount < count ? cursorCount : count;
         if (cursorCount != 0) {
@@ -308,9 +308,9 @@ public class DBManager {
         int viewedSize = viewedQuestions.size();
         String q;
         ArrayList<JsonQuestion> arrayList = new ArrayList<>();
-        database = getSearchHelper().getReadableDatabase();
-        Cursor cursor = database.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
-        cursorCount = cursor.getCount();
+        mDatabase = getSearchHelper().getReadableDatabase();
+        Cursor cursor = mDatabase.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
+        mCursorCount = cursor.getCount();
         if (cursor.moveToFirst()) {
             whileloop:
             do {
@@ -334,39 +334,39 @@ public class DBManager {
         String id = mRef.push().getKey();
         Log.d(TAG, "addQuestion: " + child + " " + id + "\n" + q);
         mRef.child(FT_LESSONS).child(child).child(FT_QUESTIONS).child(id).setValue(q);
-        //database.close();
+        //mDatabase.close();
     }
 
     public void delQuestion(int id) {
-        SQLiteDatabase database = helper.getWritableDatabase();
+        SQLiteDatabase database = mHelper.getWritableDatabase();
         String sql = "DELETE FROM " + DBHelper.QUESTION_TABLE + " WHERE _id = " + id + ";";
         database.execSQL(sql);
         database.close();
     }
 
     public void close() {
-        SQLiteDatabase database = helper.getWritableDatabase();
-        helper.close();
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+        mHelper.close();
         database.close();
     }
 
     public void addUser(String name, String password) {
-        database = helper.getWritableDatabase();
+        mDatabase = mHelper.getWritableDatabase();
         String sql = "INSERT INTO " + DBHelper.USER_TABLE + " (" + DBHelper.USERNAME_ROW + ", " + DBHelper.USER_PASSWORD + ") VALUES ('" + name + "', '" + password + "')";
-        database.execSQL(sql);
+        mDatabase.execSQL(sql);
 
     }
 
     public boolean logIn(String username, String password) {
-        database = helper.getWritableDatabase();
-        Cursor cursor = database.query(DBHelper.USER_TABLE, null, null, null, null, null, null);
+        mDatabase = mHelper.getWritableDatabase();
+        Cursor cursor = mDatabase.query(DBHelper.USER_TABLE, null, null, null, null, null, null);
         if (cursor.moveToFirst())
             do {
                 int id = cursor.getInt(0);
                 String name = cursor.getString(1);
                 String pswr = cursor.getString(2);
                 if (name.equals(username) && pswr.equals(password)) {
-                    usManager.logIn(id);
+                    mUsManager.logIn(id);
                     Log.d("TEST", true + "");
                     return true;
                 }
@@ -378,8 +378,8 @@ public class DBManager {
 
     public HashMap<String, String> getUserById(int userId) {
         HashMap<String, String> map = new HashMap<>();
-        database = helper.getReadableDatabase();
-        Cursor cursor = database.query(DBHelper.USER_TABLE, null, null, null, null, null, null);
+        mDatabase = mHelper.getReadableDatabase();
+        Cursor cursor = mDatabase.query(DBHelper.USER_TABLE, null, null, null, null, null, null);
         if (cursor.moveToFirst())
             do {
                 int id = cursor.getInt(0);
@@ -401,8 +401,8 @@ public class DBManager {
 
     public ArrayList<String> getUserQuestions(int id) {
         ArrayList<String> arrayList = new ArrayList<>();
-        database = helper.getReadableDatabase();
-        Cursor cursor = database.query(DBHelper.QUESTION_TABLE, null, null, null, null, null, null);
+        mDatabase = mHelper.getReadableDatabase();
+        Cursor cursor = mDatabase.query(DBHelper.QUESTION_TABLE, null, null, null, null, null, null);
         if (cursor.moveToFirst())
             do {
                 int from = cursor.getInt(2);
@@ -423,17 +423,17 @@ public class DBManager {
     }
 
     public DBSearchHelper getSearchHelper() {
-        dbSearchHelper = new DBSearchHelper(context);
-        return dbSearchHelper;
+        mSearchHelper = new DBSearchHelper(mContext);
+        return mSearchHelper;
     }
 
     public ArrayList<SearchData> generateSearchListFullFromLocalDb() {
         if (LessonManager.lessonChanged) {
-            mfullSearchList.clear();
+            mArrayListSearchFull.clear();
         }
-        if (mfullSearchList.size() <= 0) {
-            database = helper.getReadableDatabase();
-            Cursor mSearchCursor = database.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
+        if (mArrayListSearchFull.size() <= 0) {
+            mDatabase = mHelper.getReadableDatabase();
+            Cursor mSearchCursor = mDatabase.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
             int cursorCount = mSearchCursor.getCount();
             if (mSearchCursor.moveToFirst()) {
 
@@ -449,7 +449,7 @@ public class DBManager {
                         for (int k = 0; k < canswers.length(); k++) {
                             searchData.setAnswer(searchData.getAnswer().concat("\n#").concat(canswers.getString(k).trim()));
                         }
-                        mfullSearchList.add(searchData);
+                        mArrayListSearchFull.add(searchData);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -460,16 +460,16 @@ public class DBManager {
         }
 
         LessonManager.lessonChanged = false;
-        return mfullSearchList;
+        return mArrayListSearchFull;
     }
 
     public ArrayList<SearchData> generateSearchListFull() {
         if (LessonManager.lessonChanged) {
-            mfullSearchList.clear();
+            mArrayListSearchFull.clear();
         }
-        if (mfullSearchList.size() <= 0) {
-            database = dbSearchHelper.getReadableDatabase();
-            Cursor mSearchCursor = database.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
+        if (mArrayListSearchFull.size() <= 0) {
+            mDatabase = mSearchHelper.getReadableDatabase();
+            Cursor mSearchCursor = mDatabase.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
             int cursorCount = mSearchCursor.getCount();
             if (mSearchCursor.moveToFirst()) {
 
@@ -485,7 +485,7 @@ public class DBManager {
                         for (int k = 0; k < canswers.length(); k++) {
                             searchData.setAnswer(searchData.getAnswer().concat("\n#").concat(canswers.getString(k).trim()));
                         }
-                        mfullSearchList.add(searchData);
+                        mArrayListSearchFull.add(searchData);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -497,59 +497,59 @@ public class DBManager {
         }
 
         LessonManager.lessonChanged = false;
-        return mfullSearchList;
+        return mArrayListSearchFull;
     }
 
     public ArrayList<SearchData> getSearchList(int size) {
 
-        int max = (mfullSearchList.size() < size) ? mfullSearchList.size() : size;
-        mSearchList.clear();
-        if (mfullSearchList.size() <= 0) {
+        int max = (mArrayListSearchFull.size() < size) ? mArrayListSearchFull.size() : size;
+        mArrayListSearch.clear();
+        if (mArrayListSearchFull.size() <= 0) {
             return new ArrayList<>();
         } else {
             for (int i = 0; i < max; i++)
-                mSearchList.add(new SearchData(mfullSearchList.get(i).getQuestion(), mfullSearchList.get(i).getAnswer()));
-            return mSearchList;
+                mArrayListSearch.add(new SearchData(mArrayListSearchFull.get(i).getQuestion(), mArrayListSearchFull.get(i).getAnswer()));
+            return mArrayListSearch;
         }
     }
 
     public ArrayList<SearchData> getSearchListLoad(int start, int size) {
         int max = (start + size);
-        if (mfullSearchList.size() <= (start + size))
-            max = mfullSearchList.size();
+        if (mArrayListSearchFull.size() <= (start + size))
+            max = mArrayListSearchFull.size();
         for (int i = start; i < max; i++)
-            mSearchList.add(new SearchData(mfullSearchList.get(i).getQuestion(), mfullSearchList.get(i).getAnswer()));
-        return mSearchList;
+            mArrayListSearch.add(new SearchData(mArrayListSearchFull.get(i).getQuestion(), mArrayListSearchFull.get(i).getAnswer()));
+        return mArrayListSearch;
     }
 
     public ArrayList<SearchData> getFullSearchList() {
-        return mfullSearchList;
+        return mArrayListSearchFull;
     }
 
 
     public ArrayList<Integer> getViewedQuestions() {
 
-        return tinyDB.getListInt(LessonManager.CURRENT_DB);
+        return mTinyDB.getListInt(LessonManager.CURRENT_DB);
     }
 
     public String getViewedPercent() {
-        database = helper.getReadableDatabase();
-        Cursor cursor = database.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
-        cursorCount = (float) cursor.getCount();
+        mDatabase = mHelper.getReadableDatabase();
+        Cursor cursor = mDatabase.query(LessonManager.CURRENT_DB, null, null, null, null, null, null);
+        mCursorCount = (float) cursor.getCount();
         cursor.close();
-        return String.format(Locale.US, "%.1f", (float) ((getViewedQuestions().size() * 100f) / cursorCount));
+        return String.format(Locale.US, "%.1f", (float) ((getViewedQuestions().size() * 100f) / mCursorCount));
 
     }
 
     public boolean isAllQuestionsViewed() {
-        return getViewedQuestions().size() >= cursorCount && cursorCount != 0;
+        return getViewedQuestions().size() >= mCursorCount && mCursorCount != 0;
     }
 
     public void addViewedQuestion(int qId) {
 
         ArrayList<Integer> list = getViewedQuestions();
         list.add(qId);
-        tinyDB.putListInt(LessonManager.CURRENT_DB, list);
+        mTinyDB.putListInt(LessonManager.CURRENT_DB, list);
 
 
     }
@@ -558,26 +558,26 @@ public class DBManager {
         String cycle_path = CYCLE_NUM + LessonManager.CURRENT_DB;
         ArrayList<Integer> list = getViewedQuestions();
         list.clear();
-        tinyDB.putListInt(LessonManager.CURRENT_DB, list);
-        tinyDB.putInt(cycle_path, (tinyDB.getInt(cycle_path) + 1));
-        Log.d("test", "new cycle started #" + tinyDB.getInt(cycle_path));
+        mTinyDB.putListInt(LessonManager.CURRENT_DB, list);
+        mTinyDB.putInt(cycle_path, (mTinyDB.getInt(cycle_path) + 1));
+        Log.d("test", "new cycle started #" + mTinyDB.getInt(cycle_path));
     }
 
     public int getCycleNum() {
-        return tinyDB.getInt(CYCLE_NUM + LessonManager.CURRENT_DB) + 1;
+        return mTinyDB.getInt(CYCLE_NUM + LessonManager.CURRENT_DB) + 1;
     }
 
     public void restartCycle() {
-        tinyDB.clear();
+        mTinyDB.clear();
         Log.d("test", "restart cycle");
     }
 
     public void setSettingsManager(SettingsManager settingsManager) {
-        this.settingsManager = settingsManager;
+        this.mSettingsManager = settingsManager;
     }
 
     public void setActivity(MainActivity activity) {
-        this.activity = activity;
+        this.mActivity = activity;
     }
 
     private class LoadDataFromFirebase extends AsyncTask<DataSnapshot, Void, Void> {
@@ -594,22 +594,22 @@ public class DBManager {
             if (mLocalDBVersion < version) {
 
                 final ContentValues contentValues = new ContentValues();
-                database = helper.getWritableDatabase();
-                Log.d("ASD", database.getPath());
+                mDatabase = mHelper.getWritableDatabase();
+                Log.d("ASD", mDatabase.getPath());
 
                 for (DataSnapshot table : dataSnapshots[0].getChildren()) {
 
-                    if (isTableExists(table.getKey(), database)) {
+                    if (isTableExists(table.getKey(), mDatabase)) {
                         Log.d(TAG, "onDataChange: " + table.getKey() + " IS EXIST");
                         String s = "DELETE FROM " + table.getKey();
-                        database.execSQL(s);
+                        mDatabase.execSQL(s);
                     } else {
                         Log.d(TAG, "onDataChange: " + table.getKey() + " IS NOT EXIST");
                         String s = "CREATE TABLE IF NOT EXISTS " + table.getKey() + " (" +
                                 "_id integer primary key, " +
                                 QUESTION_ROW + " text," +
                                 QUESTION_FROM + " integer);";
-                        database.execSQL(s);
+                        mDatabase.execSQL(s);
                         //addNewLessonMenuItem(table.getKey(), table.child());
 
                         Log.d(TAG, "onDataChange: TABLE " + table.getKey() + " CREATED");
@@ -618,10 +618,10 @@ public class DBManager {
                     Log.d(TAG, "onDataChange: " + table.child("name").getValue());
                     for (DataSnapshot snapshot : table.getChildren()) {
                         for (DataSnapshot item : snapshot.getChildren()) {
-                            if (!database.isOpen()) database = helper.getWritableDatabase();
+                            if (!mDatabase.isOpen()) mDatabase = mHelper.getWritableDatabase();
                             contentValues.put(QUESTION_ROW, item.getValue(String.class));
                             contentValues.put(QUESTION_FROM, "admin");
-                            database.insert(table.getKey(), null, contentValues);
+                            mDatabase.insert(table.getKey(), null, contentValues);
                             Log.d(TAG, "onDataChange: " + item.getValue());
                         }
 
@@ -641,10 +641,10 @@ public class DBManager {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             showSnackBarUpdated();
-            settingsManager.saveDBVersion(version);
+            mSettingsManager.saveDBVersion(version);
             restartCycle();
-            activity.startAsyncLoad();
-            activity.updateAdapter();
+            mActivity.startAsyncLoad();
+            mActivity.updateAdapter();
 
 
         }
@@ -666,8 +666,8 @@ public class DBManager {
 
     private void addNewLessonMenuItem(String lessonName, String lessonDb) {
         String sql = "INSERT INTO " + DBHelper.MENU_LESSONS + " (" + DBHelper.MENU_LESSON_NAME + ", " + DBHelper.MENU_LESSON_DB + ") VALUES ('" + lessonName + "','" + lessonDb + "')";
-        database = helper.getWritableDatabase();
-        database.execSQL(sql);
+        mDatabase = mHelper.getWritableDatabase();
+        mDatabase.execSQL(sql);
 
     }
 
@@ -676,6 +676,6 @@ public class DBManager {
     }
 
     public DBHelper getHelper() {
-        return helper;
+        return mHelper;
     }
 }

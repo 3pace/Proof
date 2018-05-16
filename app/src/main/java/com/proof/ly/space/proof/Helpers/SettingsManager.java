@@ -9,8 +9,8 @@ import android.content.SharedPreferences;
 
 public class SettingsManager {
 
-    private SharedPreferences preferences;
-    private SharedPreferences.Editor editor;
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
     private final String PREF_NAME = "settings";
     private final String COLORED = "colored";
     private final String CYCLE_MODE = "cycle_mode";
@@ -22,54 +22,54 @@ public class SettingsManager {
     public static boolean colored,cycleMode,autoflip,nighmode,quesCount;
 
     public SettingsManager(Context context) {
-        preferences = context.getSharedPreferences(PREF_NAME,0);
+        mPreferences = context.getSharedPreferences(PREF_NAME,0);
     }
 
     public void saveColoredState(boolean state){
-        editor = preferences.edit();
-        editor.putBoolean(COLORED,state);
-        editor.apply();
+        mEditor = mPreferences.edit();
+        mEditor.putBoolean(COLORED,state);
+        mEditor.apply();
 
     }
     public boolean getColoredState(){
-        return preferences.getBoolean(COLORED,false);
+        return mPreferences.getBoolean(COLORED,false);
     }
     public void saveModeState(boolean mode){
-        editor = preferences.edit();
-        editor.putBoolean(CYCLE_MODE, mode);
-        editor.apply();
+        mEditor = mPreferences.edit();
+        mEditor.putBoolean(CYCLE_MODE, mode);
+        mEditor.apply();
     }
     public boolean getCycleModeState(){
-        return preferences.getBoolean(CYCLE_MODE,false);
+        return mPreferences.getBoolean(CYCLE_MODE,false);
     }
 
     public void saveAutoflipState(boolean state){
-        editor = preferences.edit();
-        editor.putBoolean(AUTOFLIP, state);
-        editor.apply();
+        mEditor = mPreferences.edit();
+        mEditor.putBoolean(AUTOFLIP, state);
+        mEditor.apply();
     }
-    public boolean getAutoflipState() { return preferences.getBoolean(AUTOFLIP,true);   }
+    public boolean getAutoflipState() { return mPreferences.getBoolean(AUTOFLIP,true);   }
     public void saveNightmodeState(boolean nighmode){
-        editor = preferences.edit();
-        editor.putBoolean(NIGHTMODE, nighmode);
-        editor.apply();
+        mEditor = mPreferences.edit();
+        mEditor.putBoolean(NIGHTMODE, nighmode);
+        mEditor.apply();
     }
-    public boolean getNightmodeState() { return preferences.getBoolean(NIGHTMODE,false);   }
+    public boolean getNightmodeState() { return mPreferences.getBoolean(NIGHTMODE,false);   }
 
     public void saveQuesCount(boolean quesCount){
-        editor = preferences.edit();
-        editor.putBoolean(QUESCOUNT,quesCount);
-        editor.apply();
+        mEditor = mPreferences.edit();
+        mEditor.putBoolean(QUESCOUNT,quesCount);
+        mEditor.apply();
     }
     public boolean getQuesCount(){
-        return preferences.getBoolean(QUESCOUNT,true);
+        return mPreferences.getBoolean(QUESCOUNT,true);
     }
     public void saveDBVersion(int version){
-        editor = preferences.edit();
-        editor.putInt(DB_VERSION, version);
-        editor.apply();
+        mEditor = mPreferences.edit();
+        mEditor.putInt(DB_VERSION, version);
+        mEditor.apply();
     }
     public int getDBVersion(){
-        return preferences.getInt(DB_VERSION,0);
+        return mPreferences.getInt(DB_VERSION,0);
     }
 }

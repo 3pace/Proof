@@ -41,34 +41,34 @@ import java.util.ArrayList;
  * Created by aman on 4/14/18.
  */
 
-public class MTestingFragment extends Fragment implements FragmentInterface{
+public class MTestingFragment extends Fragment implements FragmentInterface {
 
-    private static MViewPager vpager;
-    private ViewPagerAdapter vpadapter;
-    private ArrayList<Question> questionsList = new ArrayList<>();
-    private ArrayList<JsonQuestion> questions = new ArrayList<>();
+    private static MViewPager mViewPager;
+    private ViewPagerAdapter mViewPagerAdapter;
+    private ArrayList<Question> mQuestionArrayList = new ArrayList<>();
+    private ArrayList<JsonQuestion> mJsonQuestionArrayList = new ArrayList<>();
     public static final int MINI = 20, BIGI = 40;
     public static int COUNT = BIGI;
-    private static Handler handler;
-    private Menu menu;
-    private SettingsManager settingsManager;
-    private QManager qManager;
-    private TinyDB tinyDB;
+    private static Handler mHandler;
+    private Menu mMenu;
+    private SettingsManager mSettingsManager;
+    private QManager mQManager;
+    private TinyDB mTinyDB;
     public static boolean loading = false;
 
 
-
-    public MTestingFragment(){}
+    public MTestingFragment() {
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        settingsManager = ((MainActivity)getActivity()).getmSettingsManager();
-        colored = settingsManager.getColoredState();
-        cycleMode = settingsManager.getCycleModeState();
-        autoflip = settingsManager.getAutoflipState();
-        quesCount = settingsManager.getQuesCount();
-        tinyDB = ((MainActivity)getActivity()).getTinyDB();
+        mSettingsManager = ((MainActivity) getActivity()).getmSettingsManager();
+        colored = mSettingsManager.getColoredState();
+        cycleMode = mSettingsManager.getCycleModeState();
+        autoflip = mSettingsManager.getAutoflipState();
+        quesCount = mSettingsManager.getQuesCount();
+        mTinyDB = ((MainActivity) getActivity()).getTinyDB();
 
         setHasOptionsMenu(true);
     }
@@ -76,7 +76,7 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.testing_fragment,container,false);
+        return inflater.inflate(R.layout.testing_fragment, container, false);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
 
     @Override
     public void initViews(View itemView) {
-        vpager = itemView.findViewById(R.id.vpager);
+        mViewPager = itemView.findViewById(R.id.vpager);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
 
     @Override
     public void initOnClick() {
-        vpager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -111,16 +111,15 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
 
 
                 if (position == 1)
-                    vpager.setAllowedSwipeDirection(MViewPager.SwipeDirection.right);
-                else if (position == questions.size())
-                    vpager.setAllowedSwipeDirection(MViewPager.SwipeDirection.left);
-                else if (position == questions.size() + 1) {
-                    vpager.setAllowedSwipeDirection(MViewPager.SwipeDirection.none);
-                    for (int i=0;i<menu.size();i++){
-                        menu.getItem(i).setVisible(false);
+                    mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.right);
+                else if (position == mJsonQuestionArrayList.size())
+                    mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.left);
+                else if (position == mJsonQuestionArrayList.size() + 1) {
+                    mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.none);
+                    for (int i = 0; i < mMenu.size(); i++) {
+                        mMenu.getItem(i).setVisible(false);
                     }
-                }
-                else vpager.setAllowedSwipeDirection(MViewPager.SwipeDirection.all);
+                } else mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.all);
             }
 
             @Override
@@ -133,22 +132,21 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
     @Override
     public void initObjects() {
 
-        vpadapter = new ViewPagerAdapter(getChildFragmentManager(), questions.size());
-        handler = new Handler();
-        qManager = ((MainActivity)getActivity()).getmQuestionManager();
+        mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), mJsonQuestionArrayList.size());
+        mHandler = new Handler();
+        mQManager = ((MainActivity) getActivity()).getmQuestionManager();
 
 
     }
 
     @Override
     public void initSetters() {
-        vpager.setAdapter(vpadapter);
-        vpager.setOffscreenPageLimit(1);
-        vpager.setAllowedSwipeDirection(MViewPager.SwipeDirection.none);
+        mViewPager.setAdapter(mViewPagerAdapter);
+        mViewPager.setOffscreenPageLimit(1);
+        mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.none);
 
 
     }
-
 
 
     private class loading extends AsyncTask<Void, Void, Void> {
@@ -161,8 +159,7 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
             initObjects();
             initSetters();
             loading = true;
-            Log.d(TAG, "onPreExecute: " + vpadapter.getCount());
-
+            Log.d(TAG, "onPreExecute: " + mViewPagerAdapter.getCount());
 
 
         }
@@ -172,8 +169,8 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
 
 
             COUNT = quesCount ? BIGI : MINI;
-            questions = qManager.generateQFromDB(COUNT);
-            questionsList = qManager.generateQuestionsList(); //question.size = count
+            mJsonQuestionArrayList = mQManager.generateQFromDB(COUNT);
+            mQuestionArrayList = mQManager.generateQuestionsList(); //question.size = count
 
             return null;
         }
@@ -182,78 +179,83 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             loading = false;
-            vpadapter.setCount(questionsList.size());
+            mViewPagerAdapter.setCount(mQuestionArrayList.size());
             initOnClick();
-            Log.d(TAG, "onPreExecute: " + vpadapter.getCount());
-            Log.d("MTestingFragment","size: "+questionsList.size());
+            Log.d(TAG, "onPreExecute: " + mViewPagerAdapter.getCount());
+            Log.d("MTestingFragment", "size: " + mQuestionArrayList.size());
             QManager.isGenerate = true;
 
 
         }
     }
+
     public static void nextPage(final int size) {
         if (SettingsManager.autoflip) {
-            handler.postDelayed(new Runnable() {
+            mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (vpager.getCurrentItem() != size)
-                        vpager.setCurrentItem(vpager.getCurrentItem() + 1);
+                    if (mViewPager.getCurrentItem() != size)
+                        mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
                 }
             }, 320);
         }
 
     }
-    public static void restartTesting(){
-        vpager.setCurrentItem(1);
+
+    public static void restartTesting() {
+        mViewPager.setCurrentItem(1);
     }
+
     public static void startTesting() {
-        vpager.setCurrentItem(1);
+        mViewPager.setCurrentItem(1);
     }
+
     public static void finishTesting(final int size) {
-        handler.postDelayed(new Runnable() {
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                vpager.setCurrentItem(size + 1);
+                mViewPager.setCurrentItem(size + 1);
             }
         }, 320);
 
     }
+
     public void stopTesting() {
-        for (int i = 0; i < questionsList.size(); i++) {
-            if (!questionsList.get(i).isChecked()) {
-                for (int j = 0; j < questionsList.get(i).getArrayListAnswers().size(); j++) {
-                    if (questionsList.get(i).getArrayListAnswers().get(j).isCorrect()) {
-                        questionsList.get(i).getArrayListAnswers().get(j).setIsChecked(1);
-                        questionsList.get(i).getArrayListAnswers().get(j).setCorrectChecked(true);
+        for (int i = 0; i < mQuestionArrayList.size(); i++) {
+            if (!mQuestionArrayList.get(i).isChecked()) {
+                for (int j = 0; j < mQuestionArrayList.get(i).getArrayListAnswers().size(); j++) {
+                    if (mQuestionArrayList.get(i).getArrayListAnswers().get(j).isCorrect()) {
+                        mQuestionArrayList.get(i).getArrayListAnswers().get(j).setIsChecked(1);
+                        mQuestionArrayList.get(i).getArrayListAnswers().get(j).setCorrectChecked(true);
                     }
 
                 }
-                for (int j = 0; j < questionsList.get(i).getArrayListAnswers().size(); j++) {
-                    if (questionsList.get(i).getArrayListAnswers().get(j).getIsChecked() != 1) {
-                        questionsList.get(i).getArrayListAnswers().get(j).setIsChecked(2);
-                        questionsList.get(i).getArrayListAnswers().get(j).setEnabled(false);
+                for (int j = 0; j < mQuestionArrayList.get(i).getArrayListAnswers().size(); j++) {
+                    if (mQuestionArrayList.get(i).getArrayListAnswers().get(j).getIsChecked() != 1) {
+                        mQuestionArrayList.get(i).getArrayListAnswers().get(j).setIsChecked(2);
+                        mQuestionArrayList.get(i).getArrayListAnswers().get(j).setEnabled(false);
                     }
                 }
 
             }
         }
-        finishTesting(questions.size());
+        finishTesting(mJsonQuestionArrayList.size());
 
     }
 
     public void all() {
 
 
-        String s = "android:switcher:"; //2131230929 = R.id.vpager
+        String s = "android:switcher:"; //2131230929 = R.id.mViewPager
 
 
-        for (int i = 0; i <= questionsList.size(); i++) {
-            Fragment fragment = getChildFragmentManager().findFragmentByTag(s +R.id.vpager+":"+ i);
+        for (int i = 0; i <= mQuestionArrayList.size(); i++) {
+            Fragment fragment = getChildFragmentManager().findFragmentByTag(s + R.id.vpager + ":" + i);
             if (fragment != null && fragment instanceof TestingFragment) {
                 ((TestingFragment) fragment).getAdapter().notifyDataSetChanged();
             }
         }
-        vpadapter.notifyDataSetChanged();
+        mViewPagerAdapter.notifyDataSetChanged();
     }
 
 
@@ -265,8 +267,9 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
         if (menu.getItem(0).getIcon() != null)
             if (colored)
                 menu.getItem(0).getIcon().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
-            else menu.getItem(0).getIcon().setColorFilter(((MainActivity)getActivity()).getClickedColor(), PorterDuff.Mode.SRC_ATOP);
-        this.menu = menu;
+            else
+                menu.getItem(0).getIcon().setColorFilter(((MainActivity) getActivity()).getClickedColor(), PorterDuff.Mode.SRC_ATOP);
+        this.mMenu = menu;
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -280,24 +283,24 @@ public class MTestingFragment extends Fragment implements FragmentInterface{
                 colored = !colored;
                 if (colored)
                     item.getIcon().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
-                else item.getIcon().setColorFilter(((MainActivity)getActivity()).getClickedColor(), PorterDuff.Mode.SRC_ATOP);
-                settingsManager.saveColoredState(colored);
+                else
+                    item.getIcon().setColorFilter(((MainActivity) getActivity()).getClickedColor(), PorterDuff.Mode.SRC_ATOP);
+                mSettingsManager.saveColoredState(colored);
                 all();
                 break;
             case R.id.stop:
                 stopTesting();
                 break;
             case R.id.settings:
-                ((MainActivity) getActivity()).replaceFragment(new MSettingsFragment(),getResources().getString(R.string.tag_settings));
+                ((MainActivity) getActivity()).replaceFragment(new MSettingsFragment(), getResources().getString(R.string.tag_settings));
                 break;
         }
         return false;
     }
 
 
-
     public TinyDB getTinyDB() {
 
-        return tinyDB;
+        return mTinyDB;
     }
 }

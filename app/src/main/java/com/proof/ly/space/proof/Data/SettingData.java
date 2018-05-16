@@ -5,15 +5,12 @@ package com.proof.ly.space.proof.Data;
  */
 
 public class SettingData {
-    private String title;
+    private String mTitle;
     private boolean state;
 
 
-    public SettingData() {
-    }
-
     public SettingData(String title, boolean state) {
-        this.title = title;
+        this.mTitle = title;
         this.state = state;
     }
 
@@ -23,7 +20,7 @@ public class SettingData {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 
     public void setState(boolean state) {
@@ -31,6 +28,6 @@ public class SettingData {
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 }

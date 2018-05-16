@@ -10,8 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.proof.ly.space.proof.Adapters.RecyclerTestingAdapter;
-import com.proof.ly.space.proof.Data.Answers;
+import com.proof.ly.space.proof.Data.Answer;
 import com.proof.ly.space.proof.Data.Question;
 import com.proof.ly.space.proof.Fragments.windows.MTestingFragment;
 import com.proof.ly.space.proof.Helpers.SettingsManager;
@@ -29,18 +30,19 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  */
 
 public class TestingFragment extends Fragment implements FragmentInterface {
-    private int position;
-    private RecyclerView rview;
-    private RecyclerTestingAdapter radapter;
-    private ArrayList<Question> questions = new ArrayList<>();
-    private ArrayList<Answers> answers = new ArrayList<>();
-    private int correctCount = 0;
-    private int checkedCount = 0;
-    private int cCount = 0;
-    private int cAnswers = 0;
+    private int mFragmentPosition;
+    private RecyclerView mRecyclerView;
+    private RecyclerTestingAdapter mTestingAdapter;
+    private ArrayList<Question> mArrayListQuestions = new ArrayList<>();
+    private ArrayList<Answer> mArrayListAnswers = new ArrayList<>();
+    private int mCorrectCount = 0;
+    private int mCheckedCount = 0;
+    private int mCorrectAnswersCount = 0;
+    private int mCorrectCheckedAnswersCount = 0;
+    private int mCorrectCheckedQuestionsCount = 0;
     private int mNotCorrectCheckedQuestionsCount = 0;
     private int mNotCorrectCheckedAnswersCount = 0;
-    private int disabledColor,clickedColor;
+    private int mDisabledColor, mClickedColor;
 
 
     public static Fragment getInstance(int position) {
@@ -57,16 +59,16 @@ public class TestingFragment extends Fragment implements FragmentInterface {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        position = getArguments().getInt("pos");
+        mFragmentPosition = getArguments().getInt("pos");
 
-        questions = ((MainActivity) getActivity()).getmQuestionManager().getQ();
-        cCount = questions.get(position).getCorrectAnswersCount();
-        questions.get(position).setLeftCorrectClickCount(cCount);
-        correctCount = questions.get(position).getLeftCorrectClickCount();
-        mNotCorrectCheckedAnswersCount = questions.get(position).getNotCorrectCheckedQuestionsCount();
+        mArrayListQuestions = ((MainActivity) getActivity()).getmQuestionManager().getQ();
+        mCorrectAnswersCount = mArrayListQuestions.get(mFragmentPosition).getCorrectAnswersCount();
+        mArrayListQuestions.get(mFragmentPosition).setLeftCorrectClickCount(mCorrectAnswersCount);
+        mCorrectCount = mArrayListQuestions.get(mFragmentPosition).getLeftCorrectClickCount();
+        mNotCorrectCheckedAnswersCount = mArrayListQuestions.get(mFragmentPosition).getNotCorrectCheckedQuestionsCount();
 
-        disabledColor = ((MainActivity)getActivity()).getDisabledColor();
-        clickedColor = ((MainActivity)getActivity()).getClickedColor();
+        mDisabledColor = ((MainActivity) getActivity()).getDisabledColor();
+        mClickedColor = ((MainActivity) getActivity()).getClickedColor();
         initObjects();
 
     }
@@ -92,7 +94,7 @@ public class TestingFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initViews(View itemView) {
-        rview = itemView.findViewById(R.id.rview);
+        mRecyclerView = itemView.findViewById(R.id.rview);
 
 
     }
@@ -100,7 +102,7 @@ public class TestingFragment extends Fragment implements FragmentInterface {
     @Override
     public void initTypeface() {
         Typeface typeface = ((MainActivity) getActivity()).getTypeface();
-        radapter.setTypeface(typeface);
+        mTestingAdapter.setTypeface(typeface);
 
     }
 
@@ -111,122 +113,151 @@ public class TestingFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initObjects() {
-        radapter = new RecyclerTestingAdapter(questions.get(position).getArrayListAnswers());
-        radapter.setDisabledColor(disabledColor, clickedColor);
+        mTestingAdapter = new RecyclerTestingAdapter(mArrayListQuestions.get(mFragmentPosition).getArrayListAnswers());
+        mTestingAdapter.setDisabledColor(mDisabledColor, mClickedColor);
 
 
     }
 
     @Override
     public void initSetters() {
-        StringBuilder text = new StringBuilder(String.valueOf((position + 1)));
-        text = cCount > 1 ?
-                text.append(". ").append(questions.get(position).getQuestion()).append(" (").append(cCount).append(" отв.)"):
-                text.append(". ").append(questions.get(position).getQuestion());
+        StringBuilder text = new StringBuilder(String.valueOf((mFragmentPosition + 1)));
+        text = mCorrectAnswersCount > 1 ?
+                text.append(". ").append(mArrayListQuestions.get(mFragmentPosition).getQuestion()).append(" (").append(mCorrectAnswersCount).append(" отв.)") :
+                text.append(". ").append(mArrayListQuestions.get(mFragmentPosition).getQuestion());
 
-        radapter.setQuestion(text.toString());
+        mTestingAdapter.setQuestion(text.toString());
 
 
-        rview.setLayoutManager(new LinearLayoutManager(getContext()));
-        rview.setAdapter(radapter);
-        OverScrollDecoratorHelper.setUpOverScroll(rview, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
-        radapter.setOnItemClick(new OnItemClick() {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mTestingAdapter);
+        OverScrollDecoratorHelper.setUpOverScroll(mRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+        mTestingAdapter.setOnItemClick(new OnItemClick() {
             @Override
-            public void onClick(int pos) {
+            public void onClick(int clickPosition) {
                 int answersSize;
-                correctCount = questions.get(position).getLeftCorrectClickCount();
-                log("before: " + correctCount);
-                answers = questions.get(position).getArrayListAnswers();
-                answersSize = answers.size();
+                mCorrectCount = mArrayListQuestions.get(mFragmentPosition).getLeftCorrectClickCount();
+                log("before: " + mCorrectCount);
+                mArrayListAnswers = mArrayListQuestions.get(mFragmentPosition).getArrayListAnswers();
+                answersSize = mArrayListAnswers.size();
 
                 for (int i = 0; i < answersSize; i++) {
-                    answers.get(i).setEnabled(answers.get(i).isEnabled());
+                    mArrayListAnswers.get(i).setEnabled(mArrayListAnswers.get(i).isEnabled());
                 }
 
-                correctCount -= 1; //сколько ра можно нажать
-                answers.get(pos).setEnabled(false);
-                answers.get(pos).setClicked(true);
-                if (answers.get(pos).isCorrect()) {
-                    answers.get(pos).setIsChecked(1);
-                    answers.get(pos).setCorrectChecked(true);
-                    cAnswers++;
+                mCorrectCount -= 1; //сколько раз можно нажать
+                mArrayListAnswers.get(clickPosition).setEnabled(false);
+                mArrayListAnswers.get(clickPosition).setClicked(true);
+                if (mArrayListAnswers.get(clickPosition).isCorrect()) {
+                    mArrayListAnswers.get(clickPosition).setIsChecked(1);
+                    mArrayListAnswers.get(clickPosition).setCorrectChecked(true);
+                    mCorrectCheckedAnswersCount++;
+
+                    switch (mCorrectAnswersCount) {
+                        case 1:
+                            if (mCorrectCheckedAnswersCount >= 1)
+                                mArrayListQuestions.get(mFragmentPosition).setCorrectChecked(true);
+                            break;
+                        case 2:
+                            if (mCorrectCheckedAnswersCount >= 1)
+                                mArrayListQuestions.get(mFragmentPosition).setCorrectChecked(true);
+                            break;
+                        case 3:
+                            if (mCorrectCheckedAnswersCount >= 2)
+                                mArrayListQuestions.get(mFragmentPosition).setCorrectChecked(true);
+                            break;
+                        default:
+                            if (mCorrectCheckedAnswersCount >= 2)
+                                mArrayListQuestions.get(mFragmentPosition).setCorrectChecked(true);
+                            break;
+
+                    }
+
+                    /*mArrayListQuestions.get(mFragmentPosition).setCorrectCheckedQuestionsCount(mCorrectCheckedQuestionsCount);
+                    эта идея не прокатила, ведь можно просто использовать
+                    условие isCorrectChecked для подсчета правильно отвеченных вопросов*/
+
                 } else {
 
                     mNotCorrectCheckedAnswersCount++;//количсетво неправильно отвеченных ответов
 
 
-                    if (cCount >= 2) { //если количесво правильных ответов в вопросе больше 2
+                    if (mCorrectAnswersCount >= 2) { //если количесво правильных ответов в вопросе больше 2
                         if (mNotCorrectCheckedAnswersCount == 2) {
                             //и проверяем если мы уже совершили 2 ошибки, то можно останавливать.
                             // Т.к. если в вопросе 3 или 2 прав. ответа, то при 2 ошибках считается что неправильно ответили на вопрос
                             log("" + mNotCorrectCheckedAnswersCount);
-                            answers.get(pos).setCorrectChecked(false);
-                            mNotCorrectCheckedQuestionsCount++;
-                            questions.get(position).setNotCorrectCheckedQuestionsCount(mNotCorrectCheckedQuestionsCount);
+                            mArrayListAnswers.get(clickPosition).setCorrectChecked(false);
+                            mArrayListQuestions.get(mFragmentPosition).setCorrectChecked(false);
+
+                           /* mArrayListQuestions.get(mFragmentPosition).setNotCorrectCheckedQuestionsCount(mNotCorrectCheckedQuestionsCount);
+                            эта идея не прокатила, ведь можно просто использовать
+                            условие isCorrectChecked для подсчета правильно отвеченных вопросов*/
+
                             if (SettingsManager.colored)
-                                correctCount = 0; //если вклчн. быстрый показ прв. отв. то при ошибке сразу останвлиаем
+                                mCorrectCount = 0; //если вклчн. быстрый показ прв. отв. то при ошибке сразу останвлиаем
                         }
                     } else {
                         //если ответов меньше чем 2, значит в вопросе один ответ, и следовательно, вопрос счиатется неправильно отвеченным
-                        questions.get(position).setNotCorrectCheckedQuestionsCount(mNotCorrectCheckedAnswersCount);
+                        mArrayListQuestions.get(mFragmentPosition).setNotCorrectCheckedQuestionsCount(mNotCorrectCheckedAnswersCount);
                     }
-                    answers.get(pos).setIsChecked(1);
+                    mArrayListAnswers.get(clickPosition).setIsChecked(1);
 
-                    questions.get(position).setNotCorrectCheckedAnswersCount(mNotCorrectCheckedAnswersCount);
+                    mArrayListQuestions.get(mFragmentPosition).setNotCorrectCheckedAnswersCount(mNotCorrectCheckedAnswersCount);
 
 
                 }
 
                /* for (int i = 0; i < answersSize; i++) {
-                    if (answers.get(i).getIsChecked() != 1) {
-                        answers.get(i).setIsChecked(2); //делаем не выбранные варианты серого цвета
+                    if (mArrayListAnswers.get(i).getIsChecked() != 1) {
+                        mArrayListAnswers.get(i).setIsChecked(2); //делаем не выбранные варианты серого цвета
 
                     }
                 }*/
 
 
-                if (correctCount == 0)
+                if (mCorrectCount == 0)
                     for (int j = 0; j < answersSize; j++) {
-                        if (answers.get(j).getIsChecked() != 1) {
-                            answers.get(j).setIsChecked(2);
-                            if (answers.get(j).isCorrect()) {
-                                answers.get(j).setIsChecked(1);
-                                answers.get(j).setClicked(false);
-                                answers.get(j).setCorrectChecked(true);
+                        if (mArrayListAnswers.get(j).getIsChecked() != 1) {
+                            mArrayListAnswers.get(j).setIsChecked(2);
+                            if (mArrayListAnswers.get(j).isCorrect()) {
+                                mArrayListAnswers.get(j).setIsChecked(1);
+                                mArrayListAnswers.get(j).setClicked(false);
+                                mArrayListAnswers.get(j).setCorrectChecked(true);
                             }
                         }
                     }
 
 
-                questions.get(position).setLeftCorrectClickCount(correctCount);
-                log("after: " + questions.get(position).getLeftCorrectClickCount() + "");
-                questions.get(position).setCorrectCheckedAnswersCount(cAnswers);
+                mArrayListQuestions.get(mFragmentPosition).setLeftCorrectClickCount(mCorrectCount);
+                log("after: " + mArrayListQuestions.get(mFragmentPosition).getLeftCorrectClickCount() + "");
+                mArrayListQuestions.get(mFragmentPosition).setCorrectCheckedAnswersCount(mCorrectCheckedAnswersCount);
 
-                if (correctCount <= 0) {
+                if (mCorrectCount <= 0) {
                     for (int i = 0; i < answersSize; i++) {
-                        answers.get(i).setEnabled(false);
+                        mArrayListAnswers.get(i).setEnabled(false);
                     }
                     addViewedQuestion();
-                    questions.get(position).setChecked(true);
-                    MTestingFragment.nextPage(questions.size());
+                    mArrayListQuestions.get(mFragmentPosition).setChecked(true);
+                    MTestingFragment.nextPage(mArrayListQuestions.size());
 
                 }
 
-                checkedCount = 0;
-                int questionsSize = questions.size();
+                mCheckedCount = 0;
+                int questionsSize = mArrayListQuestions.size();
                 for (int i = 0; i < questionsSize; i++)
-                    if (questions.get(i).isChecked()) {
-                        checkedCount++;
+                    if (mArrayListQuestions.get(i).isChecked()) {
+                        mCheckedCount++;
                     }
 
-                log("checked c: " + checkedCount + ", size: " + questions.size());
-                if (checkedCount >= questionsSize) {
+                log("checked c: " + mCheckedCount + ", size: " + mArrayListQuestions.size());
+                if (mCheckedCount >= questionsSize) {
                     ((MainActivity) getActivity()).getmQuestionManager().stopTesting();
-                    MTestingFragment.finishTesting(questions.size());
+                    MTestingFragment.finishTesting(mArrayListQuestions.size());
 
                 }
 
-                radapter.notifyDataSetChanged();
+                mTestingAdapter.notifyDataSetChanged();
 
             }
 
@@ -237,7 +268,7 @@ public class TestingFragment extends Fragment implements FragmentInterface {
 
     private void addViewedQuestion() {
         if (SettingsManager.cycleMode) {
-            int qId = questions.get(position).getQuestionId();
+            int qId = mArrayListQuestions.get(mFragmentPosition).getQuestionId();
             ((MainActivity) getActivity()).getmDBManager().addViewedQuestion(qId); //добавялем id вопроса в список просмотренных
             Log.d("test", "question added id: " + qId);
         } else {
@@ -247,7 +278,7 @@ public class TestingFragment extends Fragment implements FragmentInterface {
 
 
     public RecyclerTestingAdapter getAdapter() {
-        return radapter;
+        return mTestingAdapter;
     }
 
     public void log(String l) {

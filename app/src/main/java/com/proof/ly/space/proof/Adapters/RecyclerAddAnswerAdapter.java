@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.proof.ly.space.proof.Data.NewAnswers;
+import com.proof.ly.space.proof.Data.NewAnswer;
 import com.proof.ly.space.proof.Interfaces.OnItemClickView;
 import com.proof.ly.space.proof.R;
 import com.proof.ly.space.proof.Utils.ClickEffect;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 public class RecyclerAddAnswerAdapter extends RecyclerView.Adapter<RecyclerAddAnswerAdapter.AnswerHolder> {
 
-    private ArrayList<NewAnswers> mArrayList;
+    private ArrayList<NewAnswer> mArrayList;
     private Typeface mTypeface;
     private OnItemClickView onItemClick;
     private int disabledColor = 0;
@@ -48,14 +48,14 @@ public class RecyclerAddAnswerAdapter extends RecyclerView.Adapter<RecyclerAddAn
     public void onBindViewHolder(AnswerHolder h, int position) {
 
 
-        NewAnswers newAnswers = mArrayList.get(position);
-        String answer = (position + 1) + " " + newAnswers.getAnswer();
+        NewAnswer newAnswer = mArrayList.get(position);
+        String answer = (position + 1) + " " + newAnswer.getAnswer();
         Spannable spannable = new SpannableString(answer);
         int start = answer.indexOf(" ");
 
         h.txt_answer.setTextColor(disabledColor);
         if (answer.length() > 0)
-            if (newAnswers.isCorrect()) {
+            if (newAnswer.isCorrect()) {
                 spannable.setSpan(new ForegroundColorSpan(h.itemView.getContext().getResources().getColor(R.color.colorPrimary)),
                         start,
                         answer.length(),
@@ -107,7 +107,7 @@ public class RecyclerAddAnswerAdapter extends RecyclerView.Adapter<RecyclerAddAn
     }
 
     public void addAnswer(String answer) {
-        mArrayList.add(new NewAnswers(answer, false));
+        mArrayList.add(new NewAnswer(answer, false));
         notifyItemInserted(mArrayList.size());
 
 
@@ -124,7 +124,7 @@ public class RecyclerAddAnswerAdapter extends RecyclerView.Adapter<RecyclerAddAn
         notifyDataSetChanged();
     }
 
-    public ArrayList<NewAnswers> getArrayList() {
+    public ArrayList<NewAnswer> getArrayList() {
         return mArrayList;
     }
 

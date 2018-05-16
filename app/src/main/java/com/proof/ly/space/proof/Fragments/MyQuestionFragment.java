@@ -30,12 +30,12 @@ import java.util.ArrayList;
  */
 
 public class MyQuestionFragment extends Fragment implements FragmentInterface {
-    private FloatingActionButton fab;
-    private MRecyclerView rview;
-    private RecyclerMenuAdapter adapter;
-    private ArrayList<String> arrayList = new ArrayList<>();
+    private FloatingActionButton mFloatingActionButton;
+    private MRecyclerView mRecyclerView;
+    private RecyclerMenuAdapter mMenuAdapter;
+    private ArrayList<String> mArrayList = new ArrayList<>();
     private View mEmptyView;
-    private DBManager dbManager;
+    private DBManager mDBManager;
 
     public static Fragment getInstance(){
         return new MyQuestionFragment();
@@ -64,8 +64,8 @@ public class MyQuestionFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initViews(View itemView) {
-        fab = itemView.findViewById(R.id.fab);
-        rview = itemView.findViewById(R.id.rview);
+        mFloatingActionButton = itemView.findViewById(R.id.fab);
+        mRecyclerView = itemView.findViewById(R.id.rview);
         mEmptyView = itemView.findViewById(R.id.img_empty);
         ((ImageView) mEmptyView.findViewById(R.id.img_empty)).setColorFilter(((MainActivity)getActivity()).getDisabledColor(), PorterDuff.Mode.SRC_ATOP);
     }
@@ -73,21 +73,21 @@ public class MyQuestionFragment extends Fragment implements FragmentInterface {
     @Override
     public void initTypeface() {
         Typeface typeface = ((MainActivity) getActivity()).getTypeface();
-        adapter.setTypeface(typeface);
+        mMenuAdapter.setTypeface(typeface);
     }
 
     @Override
     public void initOnClick() {
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fab.setClickable(false);
-                fab.hide();
+                mFloatingActionButton.setClickable(false);
+                mFloatingActionButton.hide();
                 MQuestionManagerFragment.nextPageFast();
             }
         });
 
-        adapter.setOnItemClick(new OnItemClick() {
+        mMenuAdapter.setOnItemClick(new OnItemClick() {
             @Override
             public void onClick(int pos) {
 
@@ -97,23 +97,23 @@ public class MyQuestionFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initObjects() {
-        adapter = new RecyclerMenuAdapter(arrayList);
-        dbManager = ((MainActivity)getActivity()).getmDBManager();
+        mMenuAdapter = new RecyclerMenuAdapter(mArrayList);
+        mDBManager = ((MainActivity)getActivity()).getmDBManager();
     }
 
     @Override
     public void initSetters() {
 
 
-        rview.setLayoutManager(new LinearLayoutManager(getContext()));
-        rview.setAdapter(adapter);
-        fab.attachToRecyclerView(rview);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mMenuAdapter);
+        mFloatingActionButton.attachToRecyclerView(mRecyclerView);
     }
     private class getData extends AsyncTask<Void,Void,Void>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            arrayList.clear();
+            mArrayList.clear();
             initObjects();
             initSetters();
             initTypeface();
@@ -122,15 +122,15 @@ public class MyQuestionFragment extends Fragment implements FragmentInterface {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            arrayList.addAll(dbManager.getUserQuestions(USManager.getUID()));
+            mArrayList.addAll(mDBManager.getUserQuestions(USManager.getUID()));
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            adapter.notifyDataSetChanged();
-            rview.setEmptyView(mEmptyView);
+            mMenuAdapter.notifyDataSetChanged();
+            mRecyclerView.setEmptyView(mEmptyView);
             initOnClick();
 
         }

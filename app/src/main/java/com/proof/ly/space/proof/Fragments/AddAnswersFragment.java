@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.melnykov.fab.FloatingActionButton;
 import com.proof.ly.space.proof.Adapters.RecyclerAddAnswerAdapter;
-import com.proof.ly.space.proof.Data.NewAnswers;
+import com.proof.ly.space.proof.Data.NewAnswer;
 import com.proof.ly.space.proof.Fragments.windows.MQuestionManagerFragment;
 import com.proof.ly.space.proof.Helpers.QManager;
 import com.proof.ly.space.proof.Interfaces.FragmentInterface;
@@ -30,15 +30,15 @@ import com.proof.ly.space.proof.R;
  */
 
 public class AddAnswersFragment extends Fragment implements FragmentInterface{
-    private TextView txt_title;
-    private Button btn_add;
-    private FloatingActionButton fab;
-    private Typeface typeface;
-    private RecyclerView rview;
-    private RecyclerAddAnswerAdapter adapter;
-    private EditText etxt;
-    private boolean enabledNext = true;
-    private QManager qManager;
+    private TextView mTextViewTitle;
+    private Button mButttonAdd;
+    private FloatingActionButton mFloatingActionButton;
+    private Typeface mTypeface;
+    private RecyclerView mRecyclerView;
+    private RecyclerAddAnswerAdapter mAdapter;
+    private EditText mEditText;
+    private boolean mIsNextEnabled = true;
+    private QManager mQManager;
 
 
     public static Fragment getInstance(){
@@ -48,7 +48,7 @@ public class AddAnswersFragment extends Fragment implements FragmentInterface{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        qManager = ((MainActivity)getActivity()).getmQuestionManager();
+        mQManager = ((MainActivity)getActivity()).getmQuestionManager();
 
     }
 
@@ -69,46 +69,46 @@ public class AddAnswersFragment extends Fragment implements FragmentInterface{
 
     @Override
     public void initViews(View itemView) {
-        txt_title = itemView.findViewById(R.id.txt_add_answer_title);
-        btn_add = itemView.findViewById(R.id.btn_add);
-        etxt = itemView.findViewById(R.id.etxt_answer);
-        rview = itemView.findViewById(R.id.rview);
-        fab = itemView.findViewById(R.id.fab);
+        mTextViewTitle = itemView.findViewById(R.id.txt_add_answer_title);
+        mButttonAdd = itemView.findViewById(R.id.btn_add);
+        mEditText = itemView.findViewById(R.id.etxt_answer);
+        mRecyclerView = itemView.findViewById(R.id.rview);
+        mFloatingActionButton = itemView.findViewById(R.id.fab);
 
     }
 
     @Override
     public void initTypeface() {
-        typeface = ((MainActivity)getActivity()).getTypeface();
-        txt_title.setTypeface(typeface);
-        btn_add.setTypeface(typeface);
-        etxt.setTypeface(typeface);
+        mTypeface = ((MainActivity)getActivity()).getTypeface();
+        mTextViewTitle.setTypeface(mTypeface);
+        mButttonAdd.setTypeface(mTypeface);
+        mEditText.setTypeface(mTypeface);
     }
 
     @Override
     public void initOnClick() {
-        btn_add.setOnClickListener(new View.OnClickListener() {
+        mButttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String answer = etxt.getText().toString().trim();
+                String answer = mEditText.getText().toString().trim();
                 addAnswer(answer);
             }
         });
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 confirm();
             }
         });
-        adapter.setOnItemClick(new OnItemClickView() {
+        mAdapter.setOnItemClick(new OnItemClickView() {
             @Override
             public void onClick(int pos,View view) {
                 switch (view.getId()) {
                     case R.id.txt_answer:
-                        adapter.setAnswerCorrect(pos);
+                        mAdapter.setAnswerCorrect(pos);
                         break;
                     case R.id.img_clear:
-                        adapter.removeAnswer(pos);
+                        mAdapter.removeAnswer(pos);
                         fabVisible();
                         break;
                 }
@@ -120,18 +120,18 @@ public class AddAnswersFragment extends Fragment implements FragmentInterface{
 
     @Override
     public void initObjects() {
-        adapter = new RecyclerAddAnswerAdapter();
+        mAdapter = new RecyclerAddAnswerAdapter();
     }
 
     @Override
     public void initSetters() {
-        adapter.setTypeface(typeface);
-        adapter.setDisabledColor(((MainActivity)getActivity()).getDisabledColor());
-        rview.setLayoutManager(new LinearLayoutManager(getContext()));
-        rview.setAdapter(adapter);
-        rview.setHasFixedSize(false);
+        mAdapter.setTypeface(mTypeface);
+        mAdapter.setDisabledColor(((MainActivity)getActivity()).getDisabledColor());
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(false);
         setDisabledNext();
-        etxt.addTextChangedListener(new TextWatcher() {
+        mEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -154,57 +154,57 @@ public class AddAnswersFragment extends Fragment implements FragmentInterface{
         fabVisible();
     }
     private void setEnabledNext() {
-        if (!enabledNext) {
-            enabledNext = true;
-            btn_add.setEnabled(true);
-            btn_add.animate().alpha(1f).setDuration(300).start();
+        if (!mIsNextEnabled) {
+            mIsNextEnabled = true;
+            mButttonAdd.setEnabled(true);
+            mButttonAdd.animate().alpha(1f).setDuration(300).start();
 
         }
     }
 
     private void setDisabledNext() {
-        if (enabledNext) {
-            enabledNext = false;
-            btn_add.setEnabled(false);
-            btn_add.animate().alpha(0.2f).setDuration(300).start();
+        if (mIsNextEnabled) {
+            mIsNextEnabled = false;
+            mButttonAdd.setEnabled(false);
+            mButttonAdd.animate().alpha(0.2f).setDuration(300).start();
         }
     }
     public void addAnswer(String answer){
-        adapter.addAnswer(answer);
+        mAdapter.addAnswer(answer);
         fabVisible();
-        etxt.setText("");
+        mEditText.setText("");
     }
     private void fabVisible(){
-        if (adapter.getItemCount()>=2) {
-            fab.show();
-            fab.setClickable(true);
+        if (mAdapter.getItemCount()>=2) {
+            mFloatingActionButton.show();
+            mFloatingActionButton.setClickable(true);
         }
         else {
-            fab.hide();
-            fab.setClickable(false);
+            mFloatingActionButton.hide();
+            mFloatingActionButton.setClickable(false);
         }
     }
 
     private void confirm() {
         int cc = 0,nc=0;
-        for (NewAnswers answers : adapter.getArrayList()){
+        for (NewAnswer answers : mAdapter.getArrayList()){
             if (answers.isCorrect()) cc++;
             else nc++;
         }
         if (cc == 0){
-            toast("Должен быть хоть 1 правильный ответ");
+            toast(getResources().getString(R.string.one_correct_answer));
             return;
         }
         else if (nc == 0){
-            toast("Должен быть хоть 1 неправильный ответ");
+            toast(getResources().getString(R.string.one_not_correct_answer));
             return;
         }
-        if (adapter.getItemCount()>=2){
-            etxt.setEnabled(false);
-            qManager.createJsonAnswers(adapter.getArrayList());
+        if (mAdapter.getItemCount()>=2){
+            mEditText.setEnabled(false);
+            mQManager.createJsonAnswers(mAdapter.getArrayList());
             MQuestionManagerFragment.nextPage();
-            fab.setClickable(false);
-            fab.hide();
+            mFloatingActionButton.setClickable(false);
+            mFloatingActionButton.hide();
 
         }
     }
