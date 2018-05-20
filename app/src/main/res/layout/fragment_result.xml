@@ -3,18 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    android:paddingBottom="@dimen/small_padding"
-    android:paddingLeft="@dimen/large_padding"
-    android:paddingRight="@dimen/large_padding"
-    android:paddingTop="@dimen/small_padding"
+    android:orientation="vertical"
     tools:context="com.proof.ly.space.proof.Fragments.StartFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+
     <LinearLayout
+        android:id="@+id/linear_layout_screen"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:background="?attr/background_color"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/small_padding"
+        android:paddingLeft="@dimen/large_padding"
+        android:paddingRight="@dimen/large_padding"
+        android:paddingTop="@dimen/small_padding">
 
         <TextView
             android:id="@+id/txt_finish_title"
@@ -22,6 +24,7 @@
             android:layout_height="wrap_content"
             android:text="@string/result_test_title"
             android:theme="@style/TitleText" />
+
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -31,9 +34,8 @@
 
             <TextView
                 android:id="@+id/txt_result_percent"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/result_test_title"
                 android:theme="@style/ResultPercentText" />
 
             <ImageView
@@ -42,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/large_margin"
                 android:visibility="invisible"
-                app:srcCompat="@drawable/baseline_sentiment_very_satisfied_black_36" />
+                app:srcCompat="@drawable/round_mood_black_36" />
 
         </LinearLayout>
 
@@ -54,17 +56,42 @@
             android:text="@string/result_test_title"
             android:theme="@style/TitleText" />
 
+        <TextView
+            android:id="@+id/txt_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/result_test_title"
+            android:theme="@style/TitleText" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end|center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_padding"
+            android:layout_marginTop="@dimen/small_padding"
+            android:minWidth="1dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:theme="@style/ButtonMenu" />
+
         <Button
             android:id="@+id/btn_restart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginBottom="@dimen/small_padding"
-            android:layout_marginLeft="@dimen/normal_padding"
-            android:layout_marginRight="@dimen/normal_padding"
+            android:layout_marginEnd="@dimen/normal_padding"
             android:layout_marginTop="@dimen/small_padding"
             android:text="@string/restart"
             android:textColor="@color/colorPrimaryDark"
             android:theme="@style/ButtonMenu" />
+
+
     </LinearLayout>
 </LinearLayout>

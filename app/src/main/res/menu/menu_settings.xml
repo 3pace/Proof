@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/update"
         android:title="@string/check_update"
-        android:icon="@drawable/ic_update_black_24dp"
+        android:icon="@drawable/round_update_black_24"
         app:showAsAction="always"
         />
 

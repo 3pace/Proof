@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_chevron_right_white_24dp"
+        android:src="@drawable/round_chevron_right_white_24"
         fab:fab_colorNormal="?attr/fab_color"
         fab:fab_colorPressed="?attr/fab_color"
         fab:fab_colorRipple="?attr/fab_color"

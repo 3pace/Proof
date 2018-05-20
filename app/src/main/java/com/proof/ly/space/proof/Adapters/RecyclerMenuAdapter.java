@@ -98,7 +98,7 @@ public class RecyclerMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         LessonHolder(View itemView) {
             super(itemView);
             mRes = itemView.getResources();
-            mIconDrwbl = mRes.getDrawable(R.drawable.ic_swap_horiz_black_24dp);
+            mIconDrwbl = mRes.getDrawable(R.drawable.round_swap_horiz_black_24);
             mIconDrwbl.setColorFilter(mRes.getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
 
             mButton = itemView.findViewById(R.id.btn_lesson);

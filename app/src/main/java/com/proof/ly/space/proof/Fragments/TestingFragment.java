@@ -208,12 +208,12 @@ public class TestingFragment extends Fragment implements FragmentInterface {
 
                 }
 
-               /* for (int i = 0; i < answersSize; i++) {
+                for (int i = 0; i < answersSize; i++) {
                     if (mArrayListAnswers.get(i).getIsChecked() != 1) {
                         mArrayListAnswers.get(i).setIsChecked(2); //делаем не выбранные варианты серого цвета
 
                     }
-                }*/
+                }
 
 
                 if (mCorrectCount == 0)
@@ -254,6 +254,7 @@ public class TestingFragment extends Fragment implements FragmentInterface {
                 if (mCheckedCount >= questionsSize) {
                     ((MainActivity) getActivity()).getmQuestionManager().stopTesting();
                     MTestingFragment.finishTesting(mArrayListQuestions.size());
+                    ((MainActivity) getActivity()).stopTimer();
 
                 }
 

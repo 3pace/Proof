@@ -69,6 +69,8 @@ public class TMenuFragment extends Fragment implements FragmentInterface {
         mArrayList.add(getResources().getString(R.string.question_db));
         mArrayList.add(getResources().getString(R.string.search_title));
         mArrayList.add(getResources().getString(R.string.settings));
+        mArrayList.add(getResources().getString(R.string.statistics));
+
 
         //mRecyclerMenuAdapter.notifyDataSetChanged();
     }
@@ -111,6 +113,9 @@ public class TMenuFragment extends Fragment implements FragmentInterface {
                         break;
                     case 3:
                         ((MainActivity) getActivity()).replaceFragment(new MSettingsFragment(), getResources().getString(R.string.tag_settings));
+                        break;
+                    case 4:
+                        ((MainActivity) getActivity()).replaceFragment(new MStatsFragment(), getResources().getString(R.string.tag_stats));
                         break;
 
                 }

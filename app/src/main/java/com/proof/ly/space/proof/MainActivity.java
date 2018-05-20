@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.proof.ly.space.proof.CustomViews.MBottomSheet;
 import com.proof.ly.space.proof.Fragments.windows.MAuthFragment;
 import com.proof.ly.space.proof.Fragments.windows.MTestingFragment;
 import com.proof.ly.space.proof.Fragments.windows.MUserFragment;
@@ -30,6 +31,9 @@ import com.proof.ly.space.proof.Helpers.QManager;
 import com.proof.ly.space.proof.Helpers.SettingsManager;
 import com.proof.ly.space.proof.Helpers.TinyDB;
 import com.proof.ly.space.proof.Interfaces.ActivityInterface;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.proof.ly.space.proof.Helpers.SettingsManager.autoflip;
 import static com.proof.ly.space.proof.Helpers.SettingsManager.colored;
@@ -51,7 +55,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TypedValue mTypedValue;
     public static final String MENU_FRAGMENT_TAG = "Axiom";
     private FirebaseAuth mAuth;
-
+    private Timer mTimer;
+    private int mTimerSeconds = 0;
+    private String mTimerText = "";
+    private int mMinutes = 0;
+    private int mSeconds = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +78,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         addBackstackChangeListener();
 
 
+    }
+
+    private void initBottomSheet() {
+        MBottomSheet bottomSheet = new MBottomSheet(MainActivity.this);
+        bottomSheet.show();
+    }
+
+    public void startTimer() {
+        stopTimer();
+        resetTimer();
+        mTimer = new Timer();
+
+        mTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mTimerSeconds++;
+                mMinutes = mTimerSeconds / 60;
+                mSeconds = mTimerSeconds - (mMinutes * 60);
+
+                Log.d("timer", mMinutes + ":" + mSeconds);
+            }
+        }, 1000, 1000);
+
+    }
+
+    public void stopTimer() {
+
+        if (mTimer != null) {
+            mTimer.purge();
+            mTimer.cancel();
+        }
+        Log.d("timer","stop");
+    }
+
+    public String getStopTime() {
+        String min = String.valueOf(mMinutes);
+        String sec = mSeconds < 10 ? "0" + String.valueOf(mSeconds) : String.valueOf(mSeconds);
+        return min + ":" + sec;
+    }
+
+    public void resetTimer(){
+        mTimerSeconds = 0;
+        mMinutes = 0;
+        mSeconds = 0;
     }
 
     private void initFragment(Fragment fragment) {

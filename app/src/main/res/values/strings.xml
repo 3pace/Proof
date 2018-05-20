@@ -78,4 +78,9 @@
     <string name="result">Результат:</string>
     <string name="one_correct_answer">Должен быть минимум 1 правильный ответ.</string>
     <string name="one_not_correct_answer">Должен быть минимум 1 неправильный ответ.</string>
+    <string name="send_to">Поделиться</string>
+    <string name="share">Поделиться</string>
+    <string name="spent_time">Времени ушло:</string>
+    <string name="statistics">Статистика</string>
+    <string name="tag_stats">Статистика</string>
 </resources>

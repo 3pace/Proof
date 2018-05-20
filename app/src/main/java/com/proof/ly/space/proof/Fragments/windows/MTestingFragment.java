@@ -110,16 +110,23 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
             public void onPageSelected(int position) {
 
 
-                if (position == 1)
+                if (position == 1) {
                     mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.right);
-                else if (position == mJsonQuestionArrayList.size())
+                }
+                else if (position == mJsonQuestionArrayList.size()) {
                     mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.left);
+                }
                 else if (position == mJsonQuestionArrayList.size() + 1) {
                     mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.none);
                     for (int i = 0; i < mMenu.size(); i++) {
                         mMenu.getItem(i).setVisible(false);
                     }
-                } else mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.all);
+                } else {
+                    mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.all);
+                    for (int i = 0; i < mMenu.size(); i++) {
+                        mMenu.getItem(i).setVisible(true);
+                    }
+                }
             }
 
             @Override
@@ -241,6 +248,8 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
         }
         finishTesting(mJsonQuestionArrayList.size());
 
+        ((MainActivity) getActivity()).stopTimer();
+
     }
 
     public void all() {
@@ -270,6 +279,9 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
             else
                 menu.getItem(0).getIcon().setColorFilter(((MainActivity) getActivity()).getClickedColor(), PorterDuff.Mode.SRC_ATOP);
         this.mMenu = menu;
+        for (int i = 0; i < mMenu.size(); i++) {
+            mMenu.getItem(i).setVisible(false);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -302,5 +314,11 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
     public TinyDB getTinyDB() {
 
         return mTinyDB;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((MainActivity) getActivity()).stopTimer();
     }
 }

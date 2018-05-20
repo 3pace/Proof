@@ -75,6 +75,7 @@ public class StartFragment extends Fragment implements FragmentInterface {
             @Override
             public void onClick(View view) {
                 MTestingFragment.startTesting();
+                ((MainActivity) getActivity()).startTimer();
             }
         });
 

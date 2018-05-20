@@ -191,7 +191,7 @@ public class DBManager {
     }
     private void showSnackBarHasLastVersion() {
         MSnackbar.builder()
-                .setDuration(15000)
+                .setDuration(3000)
                 .setActivity(mActivity)
                 .setText(mContext.getResources().getString(R.string.has_last_version))
                 .setTextTypeface(mActivity.getTypeface())
