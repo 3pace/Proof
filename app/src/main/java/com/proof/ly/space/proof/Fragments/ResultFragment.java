@@ -5,6 +5,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -19,19 +20,22 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.proof.ly.space.proof.Helpers.MConstans;
+import com.proof.ly.space.proof.Data.Lesson;
+import com.proof.ly.space.proof.Fragments.windows.MTestingFragment;
+import com.proof.ly.space.proof.Helpers.DBManager;
+import com.proof.ly.space.proof.Helpers.LessonManager;
+import com.proof.ly.space.proof.Helpers.MConstants;
 import com.proof.ly.space.proof.Interfaces.FragmentInterface;
 import com.proof.ly.space.proof.MainActivity;
 import com.proof.ly.space.proof.R;
@@ -40,8 +44,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 
-import static android.support.constraint.Constraints.TAG;
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -49,29 +51,33 @@ public class ResultFragment extends Fragment implements FragmentInterface {
 
     private TextView mTextViewResult, mTextViewFinish, mTextViewResultPercent, mTextViewTime;
     private ImageView mImageViewResultIcon;
-    private Button mButtonRestart,mButtonShare;
-    private boolean mInit = false;
+    private Button mButtonRestart, mButtonShare;
     private boolean mOnceIconAnimation = false;
     private View mScreenView;
-    private final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 222;
-
+    private MainActivity mActivity;
+    private DBManager mDatabaseManager;
+    private Toolbar mToolbar;
+    private TextView mTextViewToolbar;
     public ResultFragment() {
 
     }
 
-    public static Fragment getInstance(int position) {
-        Bundle bundle = new Bundle();
-        bundle.putInt("pos", position);
-        ResultFragment fragment = new ResultFragment();
-        fragment.setArguments(bundle);
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity) context;
+    }
 
-        return fragment;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mDatabaseManager = mActivity.getDatabaseManager();
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_result, container, false);
     }
 
@@ -87,7 +93,9 @@ public class ResultFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initViews(View itemView) {
-        mInit = true;
+        mToolbar = itemView.findViewById(R.id.tbar);
+        mTextViewToolbar = mToolbar.findViewById(R.id.txt_tbar);
+        mActivity.setSupportActionBar(mToolbar);
         mTextViewResult = itemView.findViewById(R.id.txt_result);
         mTextViewFinish = itemView.findViewById(R.id.txt_finish_title);
         mButtonRestart = itemView.findViewById(R.id.btn_restart);
@@ -101,7 +109,8 @@ public class ResultFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initTypeface() {
-        Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/ubuntum.ttf");
+        Typeface typeface = mActivity.getTypeface();
+        mTextViewToolbar.setTypeface(typeface);
         mTextViewResult.setTypeface(typeface);
         mTextViewFinish.setTypeface(typeface);
         mButtonRestart.setTypeface(typeface);
@@ -116,7 +125,9 @@ public class ResultFragment extends Fragment implements FragmentInterface {
         mButtonRestart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().onBackPressed();
+                mActivity.getSupportFragmentManager().popBackStack();
+                mActivity.getSupportFragmentManager().popBackStack();
+                mActivity.replaceFragment(new MTestingFragment(), getResources().getString(R.string.tag_testing));
 
 
             }
@@ -137,21 +148,22 @@ public class ResultFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initSetters() {
+        mTextViewToolbar.setText(getResources().getString(R.string.tag_result));
         Drawable mShareButtonIcon = getResources().getDrawable(R.drawable.baseline_share_black_24);
         mShareButtonIcon.setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
         mButtonShare.setCompoundDrawablesWithIntrinsicBounds(null, null,
                 mShareButtonIcon, null);
 
 
-        HashMap<String, Integer> resultMap = ((MainActivity) getActivity()).getmQuestionManager().getTestingResult();
-        int correctQuestions = resultMap.get(MConstans.TESTING_RESULT_CORRECT_QUESTIONS_COUNT);
-        int notCorrectQuestions = resultMap.get(MConstans.TESTING_RESULT_NOT_CORRECT_QUESTIONS_COUNT);
-        int totalPoints = resultMap.get(MConstans.TESTING_RESULT_POINTS);
-        int mistakes = resultMap.get(MConstans.TESTING_RESULT_MISTAKES);
-        int percent = resultMap.get(MConstans.TESTING_RESULT_PERCENT);
-        int notChecked = resultMap.get(MConstans.TESTING_RESULT_NOT_CHECKED_COUNT);
-        int questionsCount = resultMap.get(MConstans.TESTING_RESULT_QUESTIONS_COUNT);
-        String spentTime = ((MainActivity) getActivity()).getStopTime();
+        HashMap<String, Integer> resultMap = mActivity.getQuestionManager().getTestingResult();
+        int correctQuestions = resultMap.get(MConstants.TESTING_RESULT_CORRECT_QUESTIONS_COUNT);
+        int notCorrectQuestions = resultMap.get(MConstants.TESTING_RESULT_NOT_CORRECT_QUESTIONS_COUNT);
+        int totalPoints = resultMap.get(MConstants.TESTING_RESULT_POINTS);
+        int mistakes = resultMap.get(MConstants.TESTING_RESULT_MISTAKES);
+        int percent = resultMap.get(MConstants.TESTING_RESULT_PERCENT);
+        int notChecked = resultMap.get(MConstants.TESTING_RESULT_NOT_CHECKED_COUNT);
+        int questionsCount = resultMap.get(MConstants.TESTING_RESULT_QUESTIONS_COUNT);
+        String spentTime = mActivity.getStopTime();
 
         StringBuilder resultText = new StringBuilder("");
         resultText
@@ -188,32 +200,26 @@ public class ResultFragment extends Fragment implements FragmentInterface {
             resultText.append(".");
         mTextViewResult.setText(resultText);
 
-        startCountAnimation("%", 0, percent, percent < 20 ? 1000 : 3000);
+        startCountAnimation("%", 0, percent, percent < 30 ? 1000 : 3000); //TODO: сделать чтобы время анимации зависело от процента
 
         Drawable mResultIcon = getResultIcon(percent);
-        mResultIcon.setColorFilter(((MainActivity) getActivity()).getClickedColor(), PorterDuff.Mode.SRC_ATOP);
+        mResultIcon.setColorFilter(mActivity.getClickedColor(), PorterDuff.Mode.SRC_ATOP);
         mImageViewResultIcon.setImageDrawable(mResultIcon);
 
 
         mTextViewTime.setText(getResources().getString(R.string.spent_time).concat(" ").concat(spentTime));
 
+        mDatabaseManager.saveStats(LessonManager.CURRENT_LESSON, totalPoints, correctQuestions, notCorrectQuestions, percent, questionsCount);
 
-        System.out.println("\ncorrect questions: " + resultMap.get(MConstans.TESTING_RESULT_CORRECT_QUESTIONS_COUNT));
-        System.out.println("not correct questions: " + resultMap.get(MConstans.TESTING_RESULT_NOT_CORRECT_QUESTIONS_COUNT));
-        System.out.println("points: " + resultMap.get(MConstans.TESTING_RESULT_POINTS));
-        System.out.println("mistakes: " + resultMap.get(MConstans.TESTING_RESULT_MISTAKES));
-        System.out.println("percent: " + resultMap.get(MConstans.TESTING_RESULT_PERCENT) + "%");
-        System.out.println("not checked: " + resultMap.get(MConstans.TESTING_RESULT_NOT_CHECKED_COUNT));
+//        System.out.println("\n correct questions: " + resultMap.get(MConstants.TESTING_RESULT_CORRECT_QUESTIONS_COUNT));
+//        System.out.println("not correct questions: " + resultMap.get(MConstants.TESTING_RESULT_NOT_CORRECT_QUESTIONS_COUNT));
+//        System.out.println("points: " + resultMap.get(MConstants.TESTING_RESULT_POINTS));
+//        System.out.println("mistakes: " + resultMap.get(MConstants.TESTING_RESULT_MISTAKES));
+//        System.out.println("percent: " + resultMap.get(MConstants.TESTING_RESULT_PERCENT) + "%");
+//        System.out.println("not checked: " + resultMap.get(MConstants.TESTING_RESULT_NOT_CHECKED_COUNT));
 
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && mInit) {
-            initSetters();
-        }
-    }
 
     public String getWord(int count, String word0, String word1, String word2) {
         int rem = count % 100;
@@ -279,7 +285,6 @@ public class ResultFragment extends Fragment implements FragmentInterface {
         File myDir = new File(root);
         String fname = "/axiom-result.jpg";
         File file = new File(myDir, fname);
-        Log.i("LOAD", root + fname);
         try {
             FileOutputStream out = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -290,8 +295,8 @@ public class ResultFragment extends Fragment implements FragmentInterface {
         }
         mTextViewFinish.setText(getResources().getText(R.string.result_test_title));
 
-        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder ();
-        StrictMode.setVmPolicy (builder.build ());
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
 
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
@@ -301,33 +306,30 @@ public class ResultFragment extends Fragment implements FragmentInterface {
     }
 
     private boolean checkPermission() {
-        if (ContextCompat.checkSelfPermission(getContext(),
+        if (ContextCompat.checkSelfPermission(mActivity.getApplicationContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+            if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
+
             } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(getActivity(),
+                int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 222;
+                ActivityCompat.requestPermissions(mActivity,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         MY_PERMISSIONS_REQUEST_READ_CONTACTS);
 
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
             }
         } else {
-            // Permission has already been granted
             return true;
         }
         return false;
     }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+        super.onPrepareOptionsMenu(menu);
 
+    }
 }

@@ -1,6 +1,7 @@
 package com.proof.ly.space.proof.Fragments;
 
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,8 +26,15 @@ public class StartFragment extends Fragment implements FragmentInterface {
 
     private TextView mTextViewInfo;
     private Button mButtonStart;
+    private MainActivity mActivity;
 
     public StartFragment() {
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity) getActivity();
     }
 
     public static Fragment getInstance(int position) {
@@ -63,7 +71,7 @@ public class StartFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initTypeface() {
-        Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/ubuntum.ttf");
+        Typeface typeface = mActivity.getTypeface();
         mButtonStart.setTypeface(typeface);
         mTextViewInfo.setTypeface(typeface);
     }
@@ -75,7 +83,7 @@ public class StartFragment extends Fragment implements FragmentInterface {
             @Override
             public void onClick(View view) {
                 MTestingFragment.startTesting();
-                ((MainActivity) getActivity()).startTimer();
+                mActivity.startTimer();
             }
         });
 
@@ -96,15 +104,15 @@ public class StartFragment extends Fragment implements FragmentInterface {
 
             if (qCount == 0) {
                 nullAnswers();
-                if (((MainActivity) getActivity()).getmDBManager().isAllQuestionsViewed()) {
+                if (mActivity.getDatabaseManager().isAllQuestionsViewed()) {
                     mButtonStart.setText(getResources().getString(R.string.new_cycle).toUpperCase());
                     mButtonStart.setVisibility(View.VISIBLE);
                     mButtonStart.setClickable(true);
                     mButtonStart.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            ((MainActivity) getActivity()).getmDBManager().newCycle();
-                            getActivity().onBackPressed();
+                            mActivity.getDatabaseManager().newCycle();
+                            mActivity.onBackPressed();
                         }
                     });
 
@@ -120,12 +128,12 @@ public class StartFragment extends Fragment implements FragmentInterface {
                         .append("\n")
                         .append(getResources().getString(R.string.viewed_questions))
                         .append(" ")
-                        .append(((MainActivity) getActivity()).getmDBManager().getViewedPercent())
+                        .append(mActivity.getDatabaseManager().getViewedPercent())
                         .append("%")
                         .append("\n")
                         .append(getResources().getString(R.string.cycle))
                         .append(" ")
-                        .append(((MainActivity) getActivity()).getmDBManager().getCycleNum())
+                        .append(mActivity.getDatabaseManager().getCycleNum())
                         ;
 
             mTextViewInfo.setText(text.toString());
@@ -142,7 +150,7 @@ public class StartFragment extends Fragment implements FragmentInterface {
     }
 
     private int getQuestionsCount() {
-        return ((MainActivity) getActivity()).getmQuestionManager().getQ().size();
+        return mActivity.getQuestionManager().getQ().size();
     }
 
 

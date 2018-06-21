@@ -3,32 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingBottom="@dimen/small_padding"
     android:paddingLeft="@dimen/large_padding"
     android:paddingRight="@dimen/large_padding"
     android:paddingTop="@dimen/small_padding"
-    android:paddingBottom="@dimen/small_padding"
     tools:context="com.proof.ly.space.proof.Fragments.StartFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/txt_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txt_info"
         android:theme="@style/TitleText"
 
- />
+        />
+
     <Button
+        android:id="@+id/btn_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/start_test_title"
-        android:id="@+id/btn_start"
-        android:theme="@style/ButtonMenu"
-        android:textColor="@color/colorPrimaryDark"
         android:layout_gravity="end"
-        android:layout_marginRight="@dimen/normal_padding"
-        android:layout_marginLeft="@dimen/normal_padding"
         android:layout_marginBottom="@dimen/small_padding"
+        android:layout_marginLeft="@dimen/normal_padding"
+        android:layout_marginRight="@dimen/normal_padding"
         android:layout_marginTop="@dimen/small_padding"
-        />
+        android:text="@string/start_test_title"
+        android:textColor="@color/colorPrimaryDark"
+        android:theme="@style/ButtonMenu" />
 
 </LinearLayout>

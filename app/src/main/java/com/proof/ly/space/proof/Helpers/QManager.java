@@ -215,13 +215,13 @@ public class QManager {
         }
         totalPercent = (int) ((correctQuestionsCount * 100f) / questionsCount);
 
-        resultMap.put(MConstans.TESTING_RESULT_CORRECT_QUESTIONS_COUNT, correctQuestionsCount);
-        resultMap.put(MConstans.TESTING_RESULT_NOT_CORRECT_QUESTIONS_COUNT, notCorrectQuestionsCount);
-        resultMap.put(MConstans.TESTING_RESULT_POINTS, totalPoints);
-        resultMap.put(MConstans.TESTING_RESULT_MISTAKES, mistakes);
-        resultMap.put(MConstans.TESTING_RESULT_PERCENT, totalPercent);
-        resultMap.put(MConstans.TESTING_RESULT_NOT_CHECKED_COUNT, notChecked);
-        resultMap.put(MConstans.TESTING_RESULT_QUESTIONS_COUNT, questionsCount);
+        resultMap.put(MConstants.TESTING_RESULT_CORRECT_QUESTIONS_COUNT, correctQuestionsCount);
+        resultMap.put(MConstants.TESTING_RESULT_NOT_CORRECT_QUESTIONS_COUNT, notCorrectQuestionsCount);
+        resultMap.put(MConstants.TESTING_RESULT_POINTS, totalPoints);
+        resultMap.put(MConstants.TESTING_RESULT_MISTAKES, mistakes);
+        resultMap.put(MConstants.TESTING_RESULT_PERCENT, totalPercent);
+        resultMap.put(MConstants.TESTING_RESULT_NOT_CHECKED_COUNT, notChecked);
+        resultMap.put(MConstants.TESTING_RESULT_QUESTIONS_COUNT, questionsCount);
 
         return resultMap;
     }

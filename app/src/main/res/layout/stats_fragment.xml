@@ -7,20 +7,31 @@
     android:focusable="true"
     android:orientation="vertical">
 
-
-    <LinearLayout
+    <include layout="@layout/toolbar"/>
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_height="wrap_content">
 
-        <com.proof.ly.space.proof.CustomViews.graphview.MGraphBar
-            android:id="@+id/graph_bar"
-            android:background="@color/darkBlue"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/large_padding"
-            />
+            android:gravity="center">
 
-    </LinearLayout>
+            <com.proof.ly.space.proof.CustomViews.graphview.MGraphBar
+                android:id="@+id/graph_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/large_padding" />
+        </LinearLayout>
 
+        <TextView
+            android:id="@+id/textViewEmptyStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/stats_empty"
+            android:theme="@style/TitleText"
+            android:visibility="gone" />
+    </FrameLayout>
 </LinearLayout>

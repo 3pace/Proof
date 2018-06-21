@@ -27,9 +27,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         if (position == 0) {
             return StartFragment.getInstance(position);
         }
-        if (position == mCount + 1 && mCount > 2) {
-            return ResultFragment.getInstance(position);
-        } else if (position <= mCount) {
+        else if (position <= mCount) {
             return TestingFragment.getInstance(position - 1);
 
 

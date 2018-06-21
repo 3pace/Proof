@@ -1,16 +1,21 @@
 package com.proof.ly.space.proof.Fragments.windows;
 
+import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.proof.ly.space.proof.Adapters.AAVPAdapter;
 import com.proof.ly.space.proof.CustomViews.MViewPager;
 import com.proof.ly.space.proof.Interfaces.FragmentInterface;
+import com.proof.ly.space.proof.MainActivity;
 import com.proof.ly.space.proof.R;
 
 /**
@@ -20,9 +25,18 @@ import com.proof.ly.space.proof.R;
 public class MAuthFragment extends Fragment implements FragmentInterface {
     private static MViewPager mViewPager;
     private AAVPAdapter mAdapter;
+    private MainActivity mActivity;
+    private Toolbar mToolbar;
+    private TextView mTextViewToolbar;
 
     public MAuthFragment() {
 
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity) context;
     }
 
     @Override
@@ -43,16 +57,22 @@ public class MAuthFragment extends Fragment implements FragmentInterface {
         initViews(view);
         initObjects();
         initSetters();
+        initTypeface();
+        initOnClick();
     }
 
     @Override
     public void initViews(View itemView) {
+        mToolbar = itemView.findViewById(R.id.tbar);
+        mTextViewToolbar = mToolbar.findViewById(R.id.txt_tbar);
+        mActivity.setSupportActionBar(mToolbar);
         mViewPager = itemView.findViewById(R.id.vpager);
     }
 
     @Override
     public void initTypeface() {
-
+        Typeface typeface = mActivity.getTypeface();
+        mTextViewToolbar.setTypeface(typeface);
     }
 
     @Override
@@ -67,6 +87,7 @@ public class MAuthFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initSetters() {
+        mTextViewToolbar.setText(getResources().getString(R.string.tag_auth));
         mViewPager.setAdapter(mAdapter);
         mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.none);
     }

@@ -6,6 +6,7 @@
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical">
+    <include layout="@layout/toolbar"/>
     <com.proof.ly.space.proof.CustomViews.MViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"

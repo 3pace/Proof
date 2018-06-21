@@ -1,5 +1,6 @@
 package com.proof.ly.space.proof.Fragments.windows;
 
+import android.content.Context;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.proof.ly.space.proof.Adapters.RecyclerSearchAdapter;
 import com.proof.ly.space.proof.CustomViews.MRecyclerView;
@@ -45,16 +48,20 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
     private int mAddItemCount = 5;
     private boolean isLoading;
     private View mEmptyView;
+    private MainActivity mActivity;
+    private Toolbar mToolbar;
+    private TextView mTextViewToolbar;
 
     public MSearchFragment() {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity) context;
     }
+
+
 
     @Nullable
     @Override
@@ -66,21 +73,25 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
-        new getData().execute();
+        new GetData().execute();
     }
 
     @Override
     public void initViews(View itemView) {
+        mToolbar = itemView.findViewById(R.id.tbar);
+        mTextViewToolbar = mToolbar.findViewById(R.id.txt_tbar);
+        mActivity.setSupportActionBar(mToolbar);
         mRecyclerView = itemView.findViewById(R.id.rview);
         mSearchEditText = itemView.findViewById(R.id.etxt_search);
         mEmptyView = itemView.findViewById(R.id.img_empty);
-        ((ImageView) mEmptyView.findViewById(R.id.img_empty)).setColorFilter(((MainActivity)getActivity()).getDisabledColor(), PorterDuff.Mode.SRC_ATOP);
+        ((ImageView) mEmptyView.findViewById(R.id.img_empty)).setColorFilter(mActivity.getDisabledColor(), PorterDuff.Mode.SRC_ATOP);
 
     }
 
     @Override
     public void initTypeface() {
-        mSearchEditText.setTypeface(((MainActivity)getActivity()).getTypeface());
+        mSearchEditText.setTypeface(mActivity.getTypeface());
+        mTextViewToolbar.setTypeface(mActivity.getTypeface());
     }
 
     @Override
@@ -98,15 +109,16 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
     @Override
     public void initObjects() {
         mAdapter = new RecyclerSearchAdapter(mArrayList);
-        mDBManager = ((MainActivity)getActivity()).getmDBManager();
+        mDBManager = mActivity.getDatabaseManager();
     }
 
     @Override
     public void initSetters() {
+        mTextViewToolbar.setText(getResources().getString(R.string.tag_search));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(false);
-        mAdapter.setTypeface(((MainActivity)getActivity()).getTypeface());
+        mAdapter.setTypeface(mActivity.getTypeface());
         mSearchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -129,7 +141,7 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
 
 
     }
-    private class getData extends AsyncTask<Void,Void,Void>{
+    private class GetData extends AsyncTask<Void,Void,Void>{
 
         @Override
         protected void onPreExecute() {
@@ -158,7 +170,7 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
             initOnClick();
         }
     }
-    private class loadData extends AsyncTask<Integer,Void,Void>{
+    private class LoadData extends AsyncTask<Integer,Void,Void>{
 
         @Override
         protected void onPreExecute() {
@@ -181,15 +193,15 @@ public class MSearchFragment extends Fragment implements FragmentInterface{
         }
     }
     public void initLoadMore(){
-        final LinearLayoutManager lmanager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+        final LinearLayoutManager layoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                mTotalItemCount = lmanager.getItemCount();
-                mLastVisibleItem = lmanager.findLastVisibleItemPosition();
+                mTotalItemCount = layoutManager.getItemCount();
+                mLastVisibleItem = layoutManager.findLastVisibleItemPosition();
                 if (!isLoading && (mLastVisibleItem + mVisibleThreshold) >= mTotalItemCount && mSearchEditText.getText().length() <=0) {
-                        new loadData().execute(mAdapter.getItemCount(), mAddItemCount);
+                        new LoadData().execute(mAdapter.getItemCount(), mAddItemCount);
 
                 }
             }

@@ -4,7 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.telecom.Call;
 import android.util.Log;
 import android.view.View;
 
@@ -15,7 +18,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.proof.ly.space.proof.CustomViews.MSnackbar;
 import com.proof.ly.space.proof.Data.JsonQuestion;
+import com.proof.ly.space.proof.Data.Question;
 import com.proof.ly.space.proof.Data.SearchData;
+import com.proof.ly.space.proof.Data.StatsData;
+import com.proof.ly.space.proof.Helpers.Retrofit.ApiClient;
+import com.proof.ly.space.proof.Helpers.Retrofit.ApiInterface;
+import com.proof.ly.space.proof.Helpers.Retrofit.QuestionResponse;
 import com.proof.ly.space.proof.MainActivity;
 import com.proof.ly.space.proof.R;
 
@@ -24,14 +32,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
+
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.content.ContentValues.TAG;
 import static com.proof.ly.space.proof.Helpers.DBHelper.QUESTION_FROM;
 import static com.proof.ly.space.proof.Helpers.DBHelper.QUESTION_ROW;
-import static com.proof.ly.space.proof.Helpers.SettingsManager.mLocalDBVersion;
+import static com.proof.ly.space.proof.Helpers.SettingsManager.localDbVersion;
 
 /**
  * Created by aman on 27.03.18.
@@ -42,6 +55,8 @@ public class DBManager {
 
     private static final String MENU_LESSON_ITEMS = "menu_items";
     private static final String FT_QUESTIONS = "questions";
+    private static final String LANG_RU = "ru";
+    private static final String LANG_KZ = "kz";
     private DBHelper mHelper;
     private SQLiteDatabase mDatabase;
     private DBSearchHelper mSearchHelper;
@@ -61,6 +76,7 @@ public class DBManager {
     private SettingsManager mSettingsManager;
     private boolean mIsDatabaseNew = false;
     private MainActivity mActivity;
+    private boolean mUpdateIsRunning = false;
 
 
     public DBManager(Context context) {
@@ -128,7 +144,7 @@ public class DBManager {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 version = dataSnapshot != null ? dataSnapshot.getValue(Integer.class) : 0;
-                if (mLocalDBVersion < version) {
+                if (localDbVersion < version) {
                     showSnackBarUpdateAvailable();
                     mIsDatabaseNew = true;
                 }
@@ -143,30 +159,37 @@ public class DBManager {
         });
         return mIsDatabaseNew;
     }
-    public boolean checkNewDatabaseVersionFromClick() {
-        mIsDatabaseNew = false;
-        mRef.child(FT_DB_VERSION).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                version = dataSnapshot != null ? dataSnapshot.getValue(Integer.class) : 0;
-                if (mLocalDBVersion < version) {
-                    showSnackBarUpdateAvailable();
-                    mIsDatabaseNew = true;
-                } else {
-                    showSnackBarHasLastVersion();
+    public boolean checkNewDatabaseVersionFromClick() {
+        if (isNetworkAvailable(mContext)) {
+            mIsDatabaseNew = false;
+            mRef.child(FT_DB_VERSION).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    version = dataSnapshot != null ? dataSnapshot.getValue(Integer.class) : 0;
+                    if (localDbVersion < version) {
+                        showSnackBarUpdateAvailable();
+                        mIsDatabaseNew = true;
+                    } else {
+                        showSnackBarHasLastVersion();
+
+                    }
+
 
                 }
 
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
+                }
+            });
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        return mIsDatabaseNew;
+            return mIsDatabaseNew;
+        } else {
+            showSnackBarNoInternetConnection();
+            return false;
+        }
     }
 
     private void showSnackBarUpdateAvailable() {
@@ -189,6 +212,7 @@ public class DBManager {
                 .show();
 
     }
+
     private void showSnackBarHasLastVersion() {
         MSnackbar.builder()
                 .setDuration(3000)
@@ -201,8 +225,8 @@ public class DBManager {
                 .setActionClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mLocalDBVersion = 0;
-                        mSettingsManager.saveDBVersion(mLocalDBVersion);
+                        localDbVersion = 0;
+                        mSettingsManager.saveDBVersion(localDbVersion);
                         mIsDatabaseNew = true;
                         addQuestionsFromFirebase();
                     }
@@ -251,13 +275,25 @@ public class DBManager {
                 .show();
 
     }
+    private void showSnackBarNoInternetConnection() {
+        MSnackbar.builder()
+                .setDuration(3000)
+                .setActivity(mActivity)
+                .setText(mContext.getResources().getString(R.string.no_internet))
+                .setTextTypeface(mActivity.getTypeface())
+                .setActionTextTypeface(mActivity.getTypeface())
+                .setBackgroundColor(mContext.getResources().getColor(R.color.colorAccent))
+                .error()
+                .show();
 
+    }
     public void addQuestionsFromFirebase() {
         showSnackBarUpdating();
-        mRef.child(FT_LESSONS).addListenerForSingleValueEvent(new ValueEventListener() {
+        mRef.child(FT_LESSONS).child(mSettingsManager.langIsRussian() ? LANG_RU : LANG_KZ).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                new LoadDataFromFirebase().execute(dataSnapshot);
+                if (!mUpdateIsRunning)
+                    new LoadDataFromFirebase().execute(dataSnapshot);
             }
 
             @Override
@@ -333,7 +369,7 @@ public class DBManager {
         String child = "zfromusers";
         String id = mRef.push().getKey();
         Log.d(TAG, "addQuestion: " + child + " " + id + "\n" + q);
-        mRef.child(FT_LESSONS).child(child).child(FT_QUESTIONS).child(id).setValue(q);
+        mRef.child(FT_LESSONS).child(mSettingsManager.langIsRussian() ? LANG_RU : LANG_KZ).child(child).child(FT_QUESTIONS).child(id).setValue(q);
         //mDatabase.close();
     }
 
@@ -554,6 +590,59 @@ public class DBManager {
 
     }
 
+    public void saveStats(String lesson, int point, int correct, int notCorrect, int percent, int questionsCount) {
+        String date = String.valueOf(System.currentTimeMillis());
+        mDatabase = mHelper.getWritableDatabase();
+        String sqlRequest = "INSERT INTO " +
+                DBHelper.STATS_TABLE +
+                " (" +
+                DBHelper.STATS_LESSON + ", " +
+                DBHelper.STATS_POINT + ", " +
+                DBHelper.STATS_CORRECT + ", " +
+                DBHelper.STATS_NOT_CORRECT + ", " +
+                DBHelper.STATS_PERCENT + ", " +
+                DBHelper.STATS_QUESTIONS_COUNT + ", " +
+                DBHelper.STATS_DATE +
+                ")" +
+                " VALUES (" +
+                "'" + lesson + "', " +
+                "'" + point + "', " +
+                "'" + correct + "', " +
+                "'" + notCorrect + "', " +
+                "'" + percent + "', " +
+                "'" + questionsCount + "', " +
+                "'" + date + "')";
+        System.out.println(date);
+        mDatabase.execSQL(sqlRequest);
+    }
+
+    public ArrayList<StatsData> getStats() {
+        ArrayList<StatsData> arrayList = new ArrayList<>();
+        mDatabase = mHelper.getReadableDatabase();
+//        String sqlRequest = "SELECT * FROM " + DBHelper.STATS_TABLE + " ORDER BY _id DESC LIMIT 10";
+        String sqlRequest = "SELECT * FROM (SELECT * FROM " + DBHelper.STATS_TABLE + " ORDER BY _id DESC LIMIT 10) ORDER BY " + DBHelper.STATS_DATE + " DESC";
+        Cursor cursor = mDatabase.rawQuery(sqlRequest, null);
+        if (cursor.moveToFirst()) {
+            do {
+                String lesson = cursor.getString(cursor.getColumnIndex(DBHelper.STATS_LESSON));
+                if (lesson.equals(LessonManager.CURRENT_LESSON)) {
+                    StatsData statsData = new StatsData();
+                    statsData.setPoint(cursor.getInt(cursor.getColumnIndex(DBHelper.STATS_POINT)));
+                    statsData.setCorrect(cursor.getInt(cursor.getColumnIndex(DBHelper.STATS_CORRECT)));
+                    statsData.setNotCorrect(cursor.getInt(cursor.getColumnIndex(DBHelper.STATS_NOT_CORRECT)));
+                    statsData.setPercent(cursor.getInt(cursor.getColumnIndex(DBHelper.STATS_PERCENT)));
+                    statsData.setCount(cursor.getInt(cursor.getColumnIndex(DBHelper.STATS_QUESTIONS_COUNT)));
+                    statsData.setDate(cursor.getString(cursor.getColumnIndex(DBHelper.STATS_DATE)));
+
+                    arrayList.add(statsData);
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        Collections.reverse(arrayList);
+        return arrayList;
+    }
+
     public void newCycle() {
         String cycle_path = CYCLE_NUM + LessonManager.CURRENT_DB;
         ArrayList<Integer> list = getViewedQuestions();
@@ -580,49 +669,83 @@ public class DBManager {
         this.mActivity = activity;
     }
 
+    public void updateFromFirebase() {
+        if (isNetworkAvailable(mContext)) {
+            if (!mUpdateIsRunning) {
+                localDbVersion = 0;
+                mIsDatabaseNew = true;
+                addQuestionsFromFirebase();
+            }
+        } else {
+            showSnackBarNoInternetConnection();
+        }
+    }
+
+    public void loadDataRetrofit() {
+        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        retrofit2.Call<ArrayList<QuestionResponse>> call = apiInterface.getAllQuestions();
+        call.enqueue(new Callback<ArrayList<QuestionResponse>>() {
+            @Override
+            public void onResponse(@NonNull retrofit2.Call<ArrayList<QuestionResponse>> call, @NonNull Response<ArrayList<QuestionResponse>> response) {
+                ArrayList<QuestionResponse> arrayList = response.body();
+                if (arrayList == null) {
+                    Log.d("retrofit", "empty");
+                    return;
+                }
+                for (QuestionResponse questionResponse : arrayList) {
+                    Log.d("retrofit", questionResponse.getQuestion());
+                }
+
+
+
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<ArrayList<QuestionResponse>> call, Throwable t) {
+                Log.d("retrofit", "failure" + t.getMessage());
+            }
+        });
+    }
     private class LoadDataFromFirebase extends AsyncTask<DataSnapshot, Void, Void> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            mUpdateIsRunning = true;
 
         }
 
         @Override
-        protected Void doInBackground(DataSnapshot... dataSnapshots) {
+        protected synchronized Void doInBackground(DataSnapshot... dataSnapshots) {
 
-            if (mLocalDBVersion < version) {
+            if (localDbVersion < version) {
 
                 final ContentValues contentValues = new ContentValues();
+                mHelper.close();
+                mContext.deleteDatabase(mContext.getDatabasePath(DBHelper.DB_NAME).getPath()); // Удаялем БД чтобы удалить старые предметы
                 mDatabase = mHelper.getWritableDatabase();
-                Log.d("ASD", mDatabase.getPath());
+
 
                 for (DataSnapshot table : dataSnapshots[0].getChildren()) {
-
                     if (isTableExists(table.getKey(), mDatabase)) {
-                        Log.d(TAG, "onDataChange: " + table.getKey() + " IS EXIST");
                         String s = "DELETE FROM " + table.getKey();
                         mDatabase.execSQL(s);
                     } else {
-                        Log.d(TAG, "onDataChange: " + table.getKey() + " IS NOT EXIST");
                         String s = "CREATE TABLE IF NOT EXISTS " + table.getKey() + " (" +
                                 "_id integer primary key, " +
                                 QUESTION_ROW + " text," +
                                 QUESTION_FROM + " integer);";
                         mDatabase.execSQL(s);
-                        //addNewLessonMenuItem(table.getKey(), table.child());
-
-                        Log.d(TAG, "onDataChange: TABLE " + table.getKey() + " CREATED");
                         addNewLessonMenuItem(table.child("name").getValue(String.class), table.getKey());
                     }
-                    Log.d(TAG, "onDataChange: " + table.child("name").getValue());
+
                     for (DataSnapshot snapshot : table.getChildren()) {
                         for (DataSnapshot item : snapshot.getChildren()) {
                             if (!mDatabase.isOpen()) mDatabase = mHelper.getWritableDatabase();
                             contentValues.put(QUESTION_ROW, item.getValue(String.class));
                             contentValues.put(QUESTION_FROM, "admin");
                             mDatabase.insert(table.getKey(), null, contentValues);
-                            Log.d(TAG, "onDataChange: " + item.getValue());
+
                         }
 
 
@@ -645,6 +768,7 @@ public class DBManager {
             restartCycle();
             mActivity.startAsyncLoad();
             mActivity.updateAdapter();
+            mUpdateIsRunning = false;
 
 
         }
@@ -677,5 +801,10 @@ public class DBManager {
 
     public DBHelper getHelper() {
         return mHelper;
+    }
+
+    public boolean isNetworkAvailable(Context context) {
+        final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 }

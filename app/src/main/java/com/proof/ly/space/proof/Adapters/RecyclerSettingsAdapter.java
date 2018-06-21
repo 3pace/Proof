@@ -12,12 +12,14 @@ import android.widget.TextView;
 
 import com.proof.ly.space.proof.Data.SettingData;
 import com.proof.ly.space.proof.Fragments.windows.MTestingFragment;
+import com.proof.ly.space.proof.Helpers.DBManager;
 import com.proof.ly.space.proof.Helpers.SettingsManager;
 import com.proof.ly.space.proof.MainActivity;
 import com.proof.ly.space.proof.R;
 
 import java.util.ArrayList;
 
+import static com.proof.ly.space.proof.Helpers.SettingsManager.currentLanguage;
 import static com.proof.ly.space.proof.Helpers.SettingsManager.cycleMode;
 import static com.proof.ly.space.proof.Helpers.SettingsManager.autoflip;
 import static com.proof.ly.space.proof.Helpers.SettingsManager.nighmode;
@@ -31,6 +33,7 @@ public class RecyclerSettingsAdapter extends RecyclerView.Adapter<RecyclerSettin
     private ArrayList<SettingData> mTitleList = new ArrayList<>();
     private Typeface mTypeface;
     private SettingsManager mSettingsManager;
+    private DBManager mDatabaseManager;
     private MainActivity mMainActivity;
 
 
@@ -56,16 +59,23 @@ public class RecyclerSettingsAdapter extends RecyclerView.Adapter<RecyclerSettin
                 holder.mButtonSettingAction.setText(resources.getText(R.string.day));
                 holder.mButtonSettingAction.setTextColor(resources.getColor(R.color.colorAccent));
             }
-        }
-        else if (position == 2){
+        } else if (position == 2) {
             if (settingData.getState()) {
-                holder.mButtonSettingAction.setText(String.valueOf(MTestingFragment.BIGI));
+                holder.mButtonSettingAction.setText(String.valueOf(MTestingFragment.BIGY));
                 holder.mButtonSettingAction.setTextColor(resources.getColor(R.color.colorPrimaryDark));
             } else {
                 holder.mButtonSettingAction.setText(String.valueOf(MTestingFragment.MINI));
                 holder.mButtonSettingAction.setTextColor(resources.getColor(R.color.colorAccent));
             }
-        }else {
+        } else if (position == 4) {
+            if (settingData.getState()) {
+                holder.mButtonSettingAction.setText(resources.getText(R.string.lang_ru));
+                holder.mButtonSettingAction.setTextColor(resources.getColor(R.color.colorPrimaryDark));
+            } else {
+                holder.mButtonSettingAction.setText(resources.getText(R.string.lang_kz));
+                holder.mButtonSettingAction.setTextColor(resources.getColor(R.color.colorPrimaryDark));
+            }
+        } else {
             if (settingData.getState()) {
                 holder.mButtonSettingAction.setText(resources.getText(R.string.settings_on));
                 holder.mButtonSettingAction.setTextColor(resources.getColor(R.color.colorPrimaryDark));
@@ -126,6 +136,12 @@ public class RecyclerSettingsAdapter extends RecyclerView.Adapter<RecyclerSettin
                                 }
 
                                 break;
+                            case 4:
+                                currentLanguage = !currentLanguage;
+                                mSettingsManager.setLanguageIsRussian(currentLanguage);
+                                mTitleList.get(getAdapterPosition()).setState(currentLanguage);
+                                mDatabaseManager.updateFromFirebase();
+                                break;
 
                         }
                         notifyDataSetChanged();
@@ -149,5 +165,9 @@ public class RecyclerSettingsAdapter extends RecyclerView.Adapter<RecyclerSettin
 
     public void setSettingsManager(SettingsManager settingsManager) {
         this.mSettingsManager = settingsManager;
+    }
+
+    public void setDatabaseManager(DBManager databaseManager) {
+        mDatabaseManager = databaseManager;
     }
 }

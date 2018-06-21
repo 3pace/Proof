@@ -3,10 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
     android:orientation="vertical"
+    android:theme="@style/FragmentBackground"
     tools:context="com.proof.ly.space.proof.Fragments.StartFragment">
 
-
+    <include layout="@layout/toolbar"/>
     <LinearLayout
         android:id="@+id/linear_layout_screen"
         android:layout_width="match_parent"

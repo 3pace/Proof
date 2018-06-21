@@ -1,5 +1,6 @@
 package com.proof.ly.space.proof.Fragments;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,15 +27,23 @@ public class AddQAConfirmFragment extends Fragment implements FragmentInterface{
     private Button mButtonConfirm;
     private QManager mQManager;
     private DBManager mDBManager;
+    private MainActivity mActivity;
+
     public static Fragment getInstance(){
         return new AddQAConfirmFragment();
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity) context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mQManager = ((MainActivity)getActivity()).getmQuestionManager();
-        mDBManager = ((MainActivity)getActivity()).getmDBManager();
+        mQManager = mActivity.getQuestionManager();
+        mDBManager = mActivity.getDatabaseManager();
     }
 
     @Nullable
@@ -61,7 +70,7 @@ public class AddQAConfirmFragment extends Fragment implements FragmentInterface{
 
     @Override
     public void initTypeface() {
-        Typeface typeface = ((MainActivity) getActivity()).getTypeface();
+        Typeface typeface = mActivity.getTypeface();
         mTextViewTitle.setTypeface(typeface);
         mButtonConfirm.setTypeface(typeface);
     }
@@ -72,7 +81,7 @@ public class AddQAConfirmFragment extends Fragment implements FragmentInterface{
             @Override
             public void onClick(View view) {
                 addQuestion();
-                getActivity().onBackPressed();
+                mActivity.onBackPressed();
             }
         });
     }

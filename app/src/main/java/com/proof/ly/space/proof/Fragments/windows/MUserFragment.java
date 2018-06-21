@@ -1,10 +1,12 @@
 package com.proof.ly.space.proof.Fragments.windows;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,15 +44,24 @@ public class MUserFragment extends Fragment implements FragmentInterface {
     private int mOnlineUsersCount;
     private String mOnlineTitle, mOnlineUsers = "";
     private String mFullText;
+    private MainActivity mActivity;
+    private Toolbar mToolbar;
+    private TextView mTextViewToolbar;
 
 
     public MUserFragment() {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity) getActivity();
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = ((MainActivity) getActivity()).getAuth();
+        mAuth = mActivity.getAuth();
         mUser = mAuth.getCurrentUser();
         mUsername = mUser != null ? mUser.getDisplayName() : "?#$!&^";
         mRef = FirebaseDatabase.getInstance().getReference(DBManager.FT_ONLINE);
@@ -78,6 +89,9 @@ public class MUserFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initViews(View itemView) {
+        mToolbar = itemView.findViewById(R.id.tbar);
+        mTextViewToolbar = mToolbar.findViewById(R.id.txt_tbar);
+        mActivity.setSupportActionBar(mToolbar);
         mInfoTextView = itemView.findViewById(R.id.txt_user_info);
         mUserOnlineTextView = itemView.findViewById(R.id.txt_online_info);
         mLogoutButton = itemView.findViewById(R.id.btn_logout);
@@ -85,10 +99,11 @@ public class MUserFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initTypeface() {
-        Typeface mTypeface = ((MainActivity) getActivity()).getTypeface();
-        mInfoTextView.setTypeface(mTypeface);
-        mUserOnlineTextView.setTypeface(mTypeface);
-        mLogoutButton.setTypeface(mTypeface);
+        Typeface typeface = mActivity.getTypeface();
+        mTextViewToolbar.setTypeface(typeface);
+        mInfoTextView.setTypeface(typeface);
+        mUserOnlineTextView.setTypeface(typeface);
+        mLogoutButton.setTypeface(typeface);
     }
 
     @Override
@@ -101,7 +116,7 @@ public class MUserFragment extends Fragment implements FragmentInterface {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             mAuth.signOut();
-                            getActivity().onBackPressed();
+                            mActivity.onBackPressed();
                         }
                     }
                 });
@@ -136,6 +151,7 @@ public class MUserFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initSetters() {
+        mTextViewToolbar.setText(getResources().getString(R.string.tag_user));
         mInfoTextView.setText(getResources().getString(R.string.welcome).concat(", ").concat(mUsername).concat("."));
 
     }

@@ -1,6 +1,8 @@
 package com.proof.ly.space.proof.Fragments.windows;
 
+import android.content.Context;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,11 +18,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.proof.ly.space.proof.Adapters.ViewPagerAdapter;
 import com.proof.ly.space.proof.CustomViews.MViewPager;
 import com.proof.ly.space.proof.Data.JsonQuestion;
 import com.proof.ly.space.proof.Data.Question;
+import com.proof.ly.space.proof.Fragments.ResultFragment;
 import com.proof.ly.space.proof.Fragments.TestingFragment;
 import com.proof.ly.space.proof.Helpers.QManager;
 import com.proof.ly.space.proof.Helpers.SettingsManager;
@@ -30,6 +35,7 @@ import com.proof.ly.space.proof.R;
 
 import static android.content.ContentValues.TAG;
 import static com.proof.ly.space.proof.Helpers.SettingsManager.colored;
+import static com.proof.ly.space.proof.Helpers.SettingsManager.currentLanguage;
 import static com.proof.ly.space.proof.Helpers.SettingsManager.cycleMode;
 import static com.proof.ly.space.proof.Helpers.SettingsManager.autoflip;
 import static com.proof.ly.space.proof.Helpers.SettingsManager.quesCount;
@@ -47,28 +53,38 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
     private ViewPagerAdapter mViewPagerAdapter;
     private ArrayList<Question> mQuestionArrayList = new ArrayList<>();
     private ArrayList<JsonQuestion> mJsonQuestionArrayList = new ArrayList<>();
-    public static final int MINI = 20, BIGI = 40;
-    public static int COUNT = BIGI;
+    public static final int MINI = 20, BIGY = 40;
+    public static int COUNT = BIGY;
     private static Handler mHandler;
     private Menu mMenu;
     private SettingsManager mSettingsManager;
     private QManager mQManager;
-    private TinyDB mTinyDB;
     public static boolean loading = false;
+    private static final int NEXT_QUESTION_DELAY = 300;
+    private MainActivity mActivity;
+    private Toolbar mToolbar;
+    private TextView mTextViewToolbar;
 
 
     public MTestingFragment() {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity) context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSettingsManager = ((MainActivity) getActivity()).getmSettingsManager();
+
+        mSettingsManager = mActivity.getSettingsManager();
         colored = mSettingsManager.getColoredState();
         cycleMode = mSettingsManager.getCycleModeState();
         autoflip = mSettingsManager.getAutoflipState();
         quesCount = mSettingsManager.getQuesCount();
-        mTinyDB = ((MainActivity) getActivity()).getTinyDB();
+        currentLanguage = mSettingsManager.langIsRussian();
 
         setHasOptionsMenu(true);
     }
@@ -83,18 +99,22 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
-        new loading().execute();
+        new LoadingData().execute();
 
     }
 
     @Override
     public void initViews(View itemView) {
+        mToolbar = itemView.findViewById(R.id.tbar);
+        mTextViewToolbar = mToolbar.findViewById(R.id.txt_tbar);
+        mActivity.setSupportActionBar(mToolbar);
         mViewPager = itemView.findViewById(R.id.vpager);
     }
 
     @Override
     public void initTypeface() {
-
+        Typeface typeface = mActivity.getTypeface();
+        mTextViewToolbar.setTypeface(typeface);
 
     }
 
@@ -141,13 +161,14 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
 
         mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), mJsonQuestionArrayList.size());
         mHandler = new Handler();
-        mQManager = ((MainActivity) getActivity()).getmQuestionManager();
+        mQManager = mActivity.getQuestionManager();
 
 
     }
 
     @Override
     public void initSetters() {
+        mTextViewToolbar.setText(R.string.tag_testing);
         mViewPager.setAdapter(mViewPagerAdapter);
         mViewPager.setOffscreenPageLimit(1);
         mViewPager.setAllowedSwipeDirection(MViewPager.SwipeDirection.none);
@@ -156,7 +177,7 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
     }
 
 
-    private class loading extends AsyncTask<Void, Void, Void> {
+    private class LoadingData extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -175,7 +196,7 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
         protected Void doInBackground(Void... voids) {
 
 
-            COUNT = quesCount ? BIGI : MINI;
+            COUNT = quesCount ? BIGY : MINI;
             mJsonQuestionArrayList = mQManager.generateQFromDB(COUNT);
             mQuestionArrayList = mQManager.generateQuestionsList(); //question.size = count
 
@@ -204,13 +225,9 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
                     if (mViewPager.getCurrentItem() != size)
                         mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
                 }
-            }, 320);
+            }, NEXT_QUESTION_DELAY);
         }
 
-    }
-
-    public static void restartTesting() {
-        mViewPager.setCurrentItem(1);
     }
 
     public static void startTesting() {
@@ -246,9 +263,11 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
 
             }
         }
-        finishTesting(mJsonQuestionArrayList.size());
+        //finishTesting(mJsonQuestionArrayList.size());
 
-        ((MainActivity) getActivity()).stopTimer();
+
+        mActivity.stopTimer();
+        mActivity.replaceFragment(new ResultFragment(), getResources().getString(R.string.tag_result));
 
     }
 
@@ -277,7 +296,7 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
             if (colored)
                 menu.getItem(0).getIcon().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
             else
-                menu.getItem(0).getIcon().setColorFilter(((MainActivity) getActivity()).getClickedColor(), PorterDuff.Mode.SRC_ATOP);
+                menu.getItem(0).getIcon().setColorFilter(mActivity.getClickedColor(), PorterDuff.Mode.SRC_ATOP);
         this.mMenu = menu;
         for (int i = 0; i < mMenu.size(); i++) {
             mMenu.getItem(i).setVisible(false);
@@ -296,29 +315,22 @@ public class MTestingFragment extends Fragment implements FragmentInterface {
                 if (colored)
                     item.getIcon().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
                 else
-                    item.getIcon().setColorFilter(((MainActivity) getActivity()).getClickedColor(), PorterDuff.Mode.SRC_ATOP);
+                    item.getIcon().setColorFilter(mActivity.getClickedColor(), PorterDuff.Mode.SRC_ATOP);
                 mSettingsManager.saveColoredState(colored);
                 all();
                 break;
             case R.id.stop:
                 stopTesting();
                 break;
-            case R.id.settings:
-                ((MainActivity) getActivity()).replaceFragment(new MSettingsFragment(), getResources().getString(R.string.tag_settings));
-                break;
+
         }
         return false;
     }
 
 
-    public TinyDB getTinyDB() {
-
-        return mTinyDB;
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((MainActivity) getActivity()).stopTimer();
+        mActivity.stopTimer();
     }
 }

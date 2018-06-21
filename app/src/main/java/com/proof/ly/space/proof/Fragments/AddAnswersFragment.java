@@ -1,5 +1,6 @@
 package com.proof.ly.space.proof.Fragments;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -39,6 +40,7 @@ public class AddAnswersFragment extends Fragment implements FragmentInterface{
     private EditText mEditText;
     private boolean mIsNextEnabled = true;
     private QManager mQManager;
+    private MainActivity mActivity;
 
 
     public static Fragment getInstance(){
@@ -46,9 +48,15 @@ public class AddAnswersFragment extends Fragment implements FragmentInterface{
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity) getActivity();
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mQManager = ((MainActivity)getActivity()).getmQuestionManager();
+        mQManager = mActivity.getQuestionManager();
 
     }
 
@@ -79,7 +87,7 @@ public class AddAnswersFragment extends Fragment implements FragmentInterface{
 
     @Override
     public void initTypeface() {
-        mTypeface = ((MainActivity)getActivity()).getTypeface();
+        mTypeface = mActivity.getTypeface();
         mTextViewTitle.setTypeface(mTypeface);
         mButttonAdd.setTypeface(mTypeface);
         mEditText.setTypeface(mTypeface);
@@ -126,7 +134,7 @@ public class AddAnswersFragment extends Fragment implements FragmentInterface{
     @Override
     public void initSetters() {
         mAdapter.setTypeface(mTypeface);
-        mAdapter.setDisabledColor(((MainActivity)getActivity()).getDisabledColor());
+        mAdapter.setDisabledColor(mActivity.getDisabledColor());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(false);

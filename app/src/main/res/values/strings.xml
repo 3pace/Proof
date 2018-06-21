@@ -83,4 +83,10 @@
     <string name="spent_time">Времени ушло:</string>
     <string name="statistics">Статистика</string>
     <string name="tag_stats">Статистика</string>
+    <string name="tag_result">Результат</string>
+    <string name="stats_empty">Здесь будет отображена Ваша статистика</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_kz">Казахский</string>
+    <string name="language">Язык</string>
+    <string name="no_internet">Проверьте подключение к интернету :(</string>
 </resources>

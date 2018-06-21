@@ -1,5 +1,6 @@
 package com.proof.ly.space.proof.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -54,16 +55,23 @@ public class LoginFragment extends Fragment implements FragmentInterface {
     private String mPhone;
     private static final int SECONDS_REM = 60;
     private DBManager mDBManager;
+    private MainActivity mActivity;
 
     public static Fragment getInstance() {
         return new LoginFragment();
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity) context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = ((MainActivity) getActivity()).getAuth();
-        mDBManager = ((MainActivity) getActivity()).getmDBManager();
+        mAuth = mActivity.getAuth();
+        mDBManager = mActivity.getDatabaseManager();
 
     }
 
@@ -90,13 +98,13 @@ public class LoginFragment extends Fragment implements FragmentInterface {
         mEditTextCode = itemView.findViewById(R.id.etxt_code);
         mTextViewTimer = itemView.findViewById(R.id.txt_timer);
         mButton = itemView.findViewById(R.id.btn_next);
-        mTextViewTimer.setTextColor(((MainActivity) getActivity()).getDisabledColor());
+        mTextViewTimer.setTextColor(mActivity.getDisabledColor());
 
     }
 
     @Override
     public void initTypeface() {
-        Typeface typeface = ((MainActivity) getActivity()).getTypeface();
+        Typeface typeface = mActivity.getTypeface();
         mEditTextName.setTypeface(typeface);
         mEditTextPhone.setTypeface(typeface);
         mEditTextCode.setTypeface(typeface);
@@ -121,7 +129,7 @@ public class LoginFragment extends Fragment implements FragmentInterface {
                                     "+7" + mPhone,
                                     SECONDS_REM,
                                     TimeUnit.SECONDS,
-                                    getActivity(),
+                                    mActivity,
                                     mCallbacks
                             );
                             mEditTextName.setEnabled(false);
@@ -204,7 +212,7 @@ public class LoginFragment extends Fragment implements FragmentInterface {
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(mActivity, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
@@ -221,8 +229,8 @@ public class LoginFragment extends Fragment implements FragmentInterface {
                             }
 
 
-                            getActivity().startActivity(new Intent(getActivity(), MainActivity.class));
-                            getActivity().finish();
+                            mActivity.startActivity(new Intent(mActivity, MainActivity.class));
+                            mActivity.finish();
                             mButton.setEnabled(true);
 
 

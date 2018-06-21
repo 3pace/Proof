@@ -1,6 +1,6 @@
 package com.proof.ly.space.proof.Helpers;
 
-public class MConstans {
+public class MConstants {
     public static final String TESTING_RESULT_CORRECT_QUESTIONS_COUNT = "crrct_qstns_cnt";
     public static final String TESTING_RESULT_NOT_CORRECT_QUESTIONS_COUNT = "not_crrct_qstns_cnt";
     public static final String TESTING_RESULT_POINTS = "pnts";

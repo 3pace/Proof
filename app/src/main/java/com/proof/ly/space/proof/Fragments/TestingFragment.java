@@ -1,5 +1,6 @@
 package com.proof.ly.space.proof.Fragments;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -43,6 +44,7 @@ public class TestingFragment extends Fragment implements FragmentInterface {
     private int mNotCorrectCheckedQuestionsCount = 0;
     private int mNotCorrectCheckedAnswersCount = 0;
     private int mDisabledColor, mClickedColor;
+    private MainActivity mActivity;
 
 
     public static Fragment getInstance(int position) {
@@ -55,26 +57,32 @@ public class TestingFragment extends Fragment implements FragmentInterface {
         return tabFragment;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity) context;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFragmentPosition = getArguments().getInt("pos");
 
-        mArrayListQuestions = ((MainActivity) getActivity()).getmQuestionManager().getQ();
+        mArrayListQuestions = mActivity.getQuestionManager().getQ();
         mCorrectAnswersCount = mArrayListQuestions.get(mFragmentPosition).getCorrectAnswersCount();
         mArrayListQuestions.get(mFragmentPosition).setLeftCorrectClickCount(mCorrectAnswersCount);
         mCorrectCount = mArrayListQuestions.get(mFragmentPosition).getLeftCorrectClickCount();
         mNotCorrectCheckedAnswersCount = mArrayListQuestions.get(mFragmentPosition).getNotCorrectCheckedQuestionsCount();
 
-        mDisabledColor = ((MainActivity) getActivity()).getDisabledColor();
-        mClickedColor = ((MainActivity) getActivity()).getClickedColor();
+        mDisabledColor = mActivity.getDisabledColor();
+        mClickedColor = mActivity.getClickedColor();
         initObjects();
 
     }
 
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@Nullable LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_testing, container, false);
         initViews(view);
@@ -83,7 +91,7 @@ public class TestingFragment extends Fragment implements FragmentInterface {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@Nullable View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initTypeface();
         initOnClick();
@@ -101,7 +109,7 @@ public class TestingFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initTypeface() {
-        Typeface typeface = ((MainActivity) getActivity()).getTypeface();
+        Typeface typeface = mActivity.getTypeface();
         mTestingAdapter.setTypeface(typeface);
 
     }
@@ -252,9 +260,10 @@ public class TestingFragment extends Fragment implements FragmentInterface {
 
                 log("checked c: " + mCheckedCount + ", size: " + mArrayListQuestions.size());
                 if (mCheckedCount >= questionsSize) {
-                    ((MainActivity) getActivity()).getmQuestionManager().stopTesting();
-                    MTestingFragment.finishTesting(mArrayListQuestions.size());
-                    ((MainActivity) getActivity()).stopTimer();
+                    mActivity.getQuestionManager().stopTesting();
+                    //MTestingFragment.finishTesting(mArrayListQuestions.size());
+                    mActivity.stopTimer();
+                    mActivity.replaceFragment(new ResultFragment(), getResources().getString(R.string.tag_result));
 
                 }
 
@@ -270,7 +279,7 @@ public class TestingFragment extends Fragment implements FragmentInterface {
     private void addViewedQuestion() {
         if (SettingsManager.cycleMode) {
             int qId = mArrayListQuestions.get(mFragmentPosition).getQuestionId();
-            ((MainActivity) getActivity()).getmDBManager().addViewedQuestion(qId); //добавялем id вопроса в список просмотренных
+            mActivity.getDatabaseManager().addViewedQuestion(qId); //добавялем id вопроса в список просмотренных
             Log.d("test", "question added id: " + qId);
         } else {
             Log.d("test", "cycle mode disabled");

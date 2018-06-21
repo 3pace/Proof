@@ -1,5 +1,6 @@
 package com.proof.ly.space.proof.Fragments;
 
+import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -36,16 +37,16 @@ public class MyQuestionFragment extends Fragment implements FragmentInterface {
     private ArrayList<String> mArrayList = new ArrayList<>();
     private View mEmptyView;
     private DBManager mDBManager;
+    private MainActivity mActivity;
 
     public static Fragment getInstance(){
         return new MyQuestionFragment();
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        //
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity) getActivity();
     }
 
     @Nullable
@@ -58,7 +59,7 @@ public class MyQuestionFragment extends Fragment implements FragmentInterface {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
-        new getData().execute();
+        new GetData().execute();
 
     }
 
@@ -67,12 +68,12 @@ public class MyQuestionFragment extends Fragment implements FragmentInterface {
         mFloatingActionButton = itemView.findViewById(R.id.fab);
         mRecyclerView = itemView.findViewById(R.id.rview);
         mEmptyView = itemView.findViewById(R.id.img_empty);
-        ((ImageView) mEmptyView.findViewById(R.id.img_empty)).setColorFilter(((MainActivity)getActivity()).getDisabledColor(), PorterDuff.Mode.SRC_ATOP);
+        ((ImageView) mEmptyView.findViewById(R.id.img_empty)).setColorFilter(mActivity.getDisabledColor(), PorterDuff.Mode.SRC_ATOP);
     }
 
     @Override
     public void initTypeface() {
-        Typeface typeface = ((MainActivity) getActivity()).getTypeface();
+        Typeface typeface = mActivity.getTypeface();
         mMenuAdapter.setTypeface(typeface);
     }
 
@@ -98,7 +99,7 @@ public class MyQuestionFragment extends Fragment implements FragmentInterface {
     @Override
     public void initObjects() {
         mMenuAdapter = new RecyclerMenuAdapter(mArrayList);
-        mDBManager = ((MainActivity)getActivity()).getmDBManager();
+        mDBManager =mActivity.getDatabaseManager();
     }
 
     @Override
@@ -109,7 +110,7 @@ public class MyQuestionFragment extends Fragment implements FragmentInterface {
         mRecyclerView.setAdapter(mMenuAdapter);
         mFloatingActionButton.attachToRecyclerView(mRecyclerView);
     }
-    private class getData extends AsyncTask<Void,Void,Void>{
+    private class GetData extends AsyncTask<Void,Void,Void>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();

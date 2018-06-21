@@ -6,7 +6,7 @@
     android:focusable="true"
     android:theme="@style/FragmentBackground"
     android:orientation="vertical">
-
+    <include layout="@layout/toolbar"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rview"
         android:layout_width="match_parent"

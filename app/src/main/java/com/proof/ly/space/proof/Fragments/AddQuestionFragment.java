@@ -1,5 +1,6 @@
 package com.proof.ly.space.proof.Fragments;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -31,15 +32,22 @@ public class AddQuestionFragment extends Fragment implements FragmentInterface {
     private EditText mEditTextQuestion;
     private boolean mIsNextEnabled = true;
     private QManager mQManager;
+    private MainActivity mActivity;
 
     public static Fragment getInstance() {
         return new AddQuestionFragment();
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity) context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mQManager = ((MainActivity)getActivity()).getmQuestionManager();
+        mQManager = mActivity.getQuestionManager();
         mQManager.initJson();
     }
 
@@ -67,7 +75,7 @@ public class AddQuestionFragment extends Fragment implements FragmentInterface {
 
     @Override
     public void initTypeface() {
-        Typeface typeface = ((MainActivity) getActivity()).getTypeface();
+        Typeface typeface = mActivity.getTypeface();
         mTextViewTitle.setTypeface(typeface);
         mEditTextQuestion.setTypeface(typeface);
 
@@ -78,7 +86,7 @@ public class AddQuestionFragment extends Fragment implements FragmentInterface {
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                confrim();
+                confirm();
             }
         });
     }
@@ -91,8 +99,8 @@ public class AddQuestionFragment extends Fragment implements FragmentInterface {
     @Override
     public void initSetters() {
         if (USManager.hasLogIn())
-            mTextViewTitle.append(", " + ((MainActivity) getActivity())
-                    .getmDBManager()
+            mTextViewTitle.append(", " +
+                    mActivity.getDatabaseManager()
                     .getUserById(USManager.getUID())
                     .get("username"));
         mFloatingActionButton.setAlpha(0.2f);
@@ -140,7 +148,7 @@ public class AddQuestionFragment extends Fragment implements FragmentInterface {
     }
 
 
-    private void confrim() {
+    private void confirm() {
         String text = mEditTextQuestion.getText().toString().trim();
         if (text.length() > 0) {
             mEditTextQuestion.setEnabled(false);

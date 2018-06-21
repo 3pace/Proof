@@ -6,7 +6,7 @@
     android:focusable="true"
     android:theme="@style/FragmentBackground"
     android:orientation="vertical">
-
+    <include layout="@layout/toolbar"/>
     <com.proof.ly.space.proof.CustomViews.MViewPager
         android:id="@+id/vpager"
         android:layout_width="match_parent"
